@@ -19,23 +19,19 @@
     "commands": [
       {
         "command": "commitologist.generateMessage",
-        "title": "Generate Commit Message",
+        "title": "Commitologist: Generate Commit Message",
         "icon": {
           "light": "../../icons/icon.svg",
           "dark": "../../icons/icon-dark.svg"
         }
       },
       {
-        "command": "commitologist.configure",
-        "title": "Configure Commitologist"
-      },
-      {
         "command": "commitologist.configureProvider",
-        "title": "Configure Provider Settings"
+        "title": "Commitologist: Configure Provider Settings"
       },
       {
         "command": "commitologist.configurePreset",
-        "title": "Configure Preset Settings"
+        "title": "Commitologist: Configure Preset Settings"
       }
     ],
     "menus": {
@@ -50,9 +46,6 @@
         {
           "command": "commitologist.generateMessage",
           "when": "scmProvider == git"
-        },
-        {
-          "command": "commitologist.configure"
         },
         {
           "command": "commitologist.configureProvider"

@@ -16,9 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const configureCommand = vscode.commands.registerCommand('commitologist.configure', async () => {
-    await configureCommitologist();
-  });
 
   const configureProviderCommand = vscode.commands.registerCommand(
     'commitologist.configureProvider',
@@ -36,7 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     generateCommand,
-    configureCommand,
     configureProviderCommand,
     configurePresetCommand
   );
@@ -66,8 +62,8 @@ export function activate(context: vscode.ExtensionContext) {
           // Get configuration
           const config = await getVSCodeConfig();
           if (!config) {
-            // If not configured, show config wizard
-            await configureCommitologist();
+            // If not configured, show provider config first
+            vscode.window.showErrorMessage('Please configure Commitologist first using "Commitologist: Configure Provider Settings"');
             return;
           }
 
@@ -110,101 +106,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  async function configureCommitologist() {
-    try {
-      // AI Provider selection
-      const aiProvider = await vscode.window.showQuickPick(
-        [
-          { label: 'OpenAI', value: 'openai' },
-          { label: 'Anthropic', value: 'anthropic' },
-          { label: 'Google Gemini', value: 'gemini' },
-          { label: 'OpenRouter', value: 'openrouter' },
-          { label: 'Ollama (Local)', value: 'ollama' },
-        ],
-        {
-          placeHolder: 'Select AI provider',
-        }
-      );
-
-      if (!aiProvider) return;
-
-      // Model selection
-      const defaultModel = DEFAULT_MODELS[aiProvider.value as AIProviderType];
-      const model = await vscode.window.showInputBox({
-        prompt: `Enter model name (default: ${defaultModel})`,
-        value: defaultModel,
-      });
-
-      if (!model) return;
-
-      // Prompt preset selection
-      const promptPreset = await vscode.window.showQuickPick(
-        [
-          { label: 'Conventional Commits', value: 'conventional' },
-          { label: 'Descriptive', value: 'descriptive' },
-          { label: 'Concise', value: 'concise' },
-          { label: 'Custom', value: 'custom' },
-        ],
-        {
-          placeHolder: 'Select prompt preset',
-        }
-      );
-
-      if (!promptPreset) return;
-
-      let customPrompt: string | undefined;
-      if (promptPreset.value === 'custom') {
-        customPrompt = await vscode.window.showInputBox({
-          prompt: 'Enter custom prompt template',
-          placeHolder: 'Write a commit message for the following changes...',
-        });
-        if (!customPrompt) return;
-      }
-
-      // API Key (if needed)
-      let apiKey: string | undefined;
-      if (aiProvider.value !== 'ollama') {
-        apiKey = await vscode.window.showInputBox({
-          prompt: `Enter ${aiProvider.label} API key`,
-          password: true,
-        });
-        if (!apiKey) return;
-      }
-
-      // Ollama URL (if needed)
-      let ollamaUrl: string | undefined;
-      if (aiProvider.value === 'ollama') {
-        ollamaUrl = await vscode.window.showInputBox({
-          prompt: 'Enter Ollama server URL',
-          value: 'http://localhost:11434',
-        });
-        if (!ollamaUrl) return;
-      }
-
-      // Save configuration
-      const config = vscode.workspace.getConfiguration('commitologist');
-      await config.update('aiProvider', aiProvider.value, vscode.ConfigurationTarget.Global);
-      await config.update('model', model, vscode.ConfigurationTarget.Global);
-      await config.update('promptPreset', promptPreset.value, vscode.ConfigurationTarget.Global);
-
-      if (customPrompt) {
-        await config.update('customPrompt', customPrompt, vscode.ConfigurationTarget.Global);
-      }
-
-      if (apiKey) {
-        await context.secrets.store(`commitologist.${aiProvider.value}.apiKey`, apiKey);
-      }
-
-      if (ollamaUrl) {
-        await config.update('ollamaUrl', ollamaUrl, vscode.ConfigurationTarget.Global);
-      }
-
-      // Configuration success notification will auto-dismiss
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      vscode.window.showErrorMessage(`Failed to configure Commitologist: ${errorMessage}`);
-    }
-  }
 
   async function configureProvider() {
     try {
