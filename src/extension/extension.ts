@@ -167,7 +167,15 @@ export function activate(context: vscode.ExtensionContext) {
         await config.update('ollamaUrl', ollamaUrl, vscode.ConfigurationTarget.Global);
       }
 
-      vscode.window.showInformationMessage('✅ Provider configuration saved successfully!');
+      // Show success notification that auto-dismisses after 3 seconds
+      vscode.window.withProgress({
+        location: vscode.ProgressLocation.Notification,
+        title: '✅ Provider configuration saved successfully!',
+        cancellable: false
+      }, async (progress) => {
+        progress.report({ increment: 100 });
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       vscode.window.showErrorMessage(`Failed to configure provider: ${errorMessage}`);
@@ -226,7 +234,15 @@ export function activate(context: vscode.ExtensionContext) {
         await config.update('customPrompt', customPrompt, vscode.ConfigurationTarget.Global);
       }
 
-      vscode.window.showInformationMessage('✅ Preset configuration saved successfully!');
+      // Show success notification that auto-dismisses after 3 seconds
+      vscode.window.withProgress({
+        location: vscode.ProgressLocation.Notification,
+        title: '✅ Preset configuration saved successfully!',
+        cancellable: false
+      }, async (progress) => {
+        progress.report({ increment: 100 });
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       vscode.window.showErrorMessage(`Failed to configure preset: ${errorMessage}`);

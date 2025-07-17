@@ -5,19 +5,43 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Simple test command
   const testCommand = vscode.commands.registerCommand('commitologist.test', () => {
-    vscode.window.showInformationMessage('Commitologist test command works!');
+    // Show success notification that auto-dismisses after 3 seconds
+    vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: '✅ Commitologist test command works!',
+      cancellable: false
+    }, async (progress) => {
+      progress.report({ increment: 100 });
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    });
   });
 
   // Register the original commands
   const generateCommand = vscode.commands.registerCommand(
     'commitologist.generateCommitMessage',
     () => {
-      vscode.window.showInformationMessage('Generate command triggered! (Implementation needed)');
+      // Show success notification that auto-dismisses after 3 seconds
+      vscode.window.withProgress({
+        location: vscode.ProgressLocation.Notification,
+        title: '✅ Generate command triggered! (Implementation needed)',
+        cancellable: false
+      }, async (progress) => {
+        progress.report({ increment: 100 });
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      });
     }
   );
 
   const configureCommand = vscode.commands.registerCommand('commitologist.configure', () => {
-    vscode.window.showInformationMessage('Configure command triggered! (Implementation needed)');
+    // Show success notification that auto-dismisses after 3 seconds
+    vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: '✅ Configure command triggered! (Implementation needed)',
+      cancellable: false
+    }, async (progress) => {
+      progress.report({ increment: 100 });
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    });
   });
 
   context.subscriptions.push(testCommand, generateCommand, configureCommand);
