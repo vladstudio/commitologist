@@ -26,7 +26,7 @@ export function spinner(message: string): () => void {
 
   return () => {
     clearInterval(interval);
-    process.stdout.write('\r');
+    process.stdout.write('\r\n');
   };
 }
 

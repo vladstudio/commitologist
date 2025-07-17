@@ -46,7 +46,7 @@ export async function generateCommitMessage(options: GenerateOptions): Promise<v
     // Check for changes (staged or unstaged based on config)
     const hasStagedChanges = await gitAnalyzer.hasStagedChanges();
     const hasUnstagedChanges = config.includeUnstagedFiles ? await gitAnalyzer.hasChanges() : false;
-    
+
     if (!hasStagedChanges && !hasUnstagedChanges) {
       console.log('📝 No changes found.');
       if (config.includeUnstagedFiles) {
@@ -56,7 +56,7 @@ export async function generateCommitMessage(options: GenerateOptions): Promise<v
       }
       return;
     }
-    
+
     if (!hasStagedChanges && config.includeUnstagedFiles) {
       console.log('📝 No staged changes found, but analyzing unstaged changes...');
     }
@@ -69,12 +69,12 @@ export async function generateCommitMessage(options: GenerateOptions): Promise<v
       console.log(`📁 Found ${stagedFiles.length} staged file(s):`);
       stagedFiles.forEach((file) => console.log(`   • ${file}`));
     }
-    
+
     if (unstagedFiles.length > 0) {
       console.log(`📄 Found ${unstagedFiles.length} unstaged file(s):`);
       unstagedFiles.forEach((file) => console.log(`   • ${file}`));
     }
-    
+
     console.log();
 
     // Generate commit message
@@ -89,9 +89,9 @@ export async function generateCommitMessage(options: GenerateOptions): Promise<v
       stopSpinner();
 
       console.log('✨ Generated commit message:');
-      console.log('━'.repeat(50));
+      console.log('—'.repeat(12));
       console.log(commitMessage);
-      console.log('━'.repeat(50));
+      console.log('—'.repeat(12));
 
       if (options.dryRun) {
         console.log('🔍 Dry run mode - no commit will be made.');

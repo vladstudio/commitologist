@@ -62,7 +62,7 @@ export class AnthropicProvider extends AIProvider {
       const response = await fetch(`${this.baseURL}/messages`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
+          'x-api-key': this.config.apiKey,
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
         },
@@ -110,7 +110,7 @@ export class AnthropicProvider extends AIProvider {
       const response = await fetch(`${this.baseURL}/messages`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
+          'x-api-key': this.config.apiKey,
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
         },
