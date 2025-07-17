@@ -1,0 +1,232 @@
+import * as vscode from 'vscode';
+import { GitAnalyzer } from '../core/GitAnalyzer.js';
+import { MessageGenerator } from '../core/MessageGenerator.js';
+import { PromptManager } from '../core/PromptManager.js';
+import { createProvider } from '../providers/index.js';
+import { Config, AIProviderType, DEFAULT_MODELS } from '../core/types.js';
+
+export function activate(context: vscode.ExtensionContext) {
+  console.log('Commitologist extension is activating...');
+
+  // Test command to verify extension is working
+  const testCommand = vscode.commands.registerCommand(
+    'commitologist.test',
+    () => {
+      vscode.window.showInformationMessage('Commitologist extension is working!');
+    }
+  );
+
+  // Register commands
+  const generateCommand = vscode.commands.registerCommand(
+    'commitologist.generateCommitMessage',
+    async () => {
+      await generateCommitMessage();
+    }
+  );
+
+  const configureCommand = vscode.commands.registerCommand(
+    'commitologist.configure',
+    async () => {
+      await configureCommitologist();
+    }
+  );
+
+  context.subscriptions.push(testCommand, generateCommand, configureCommand);
+  
+  console.log('Commitologist extension activated successfully!');
+
+  async function generateCommitMessage() {
+    try {
+      // Show progress indicator
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: 'Generating commit message...',
+          cancellable: false,
+        },
+        async (progress) => {
+          progress.report({ increment: 0 });
+
+          // Get workspace folder
+          const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+          if (!workspaceFolder) {
+            throw new Error('No workspace folder found');
+          }
+
+          progress.report({ increment: 20 });
+
+          // Get configuration
+          const config = await getVSCodeConfig();
+          if (!config) {
+            vscode.window.showErrorMessage(
+              'Commitologist is not configured. Please run "Configure Commitologist" first.'
+            );
+            return;
+          }
+
+          progress.report({ increment: 40 });
+
+          // Create AI provider and dependencies
+          const aiProvider = createProvider(config);
+          const gitAnalyzer = new GitAnalyzer(workspaceFolder.uri.fsPath);
+          const promptManager = new PromptManager();
+          const messageGenerator = new MessageGenerator(aiProvider, gitAnalyzer, promptManager, config);
+
+          progress.report({ increment: 60 });
+
+          // Generate commit message
+          const message = await messageGenerator.generateCommitMessage();
+
+          progress.report({ increment: 80 });
+
+          // Insert message into Source Control input
+          const gitExtension = vscode.extensions.getExtension('vscode.git');
+          if (gitExtension?.isActive) {
+            const git = gitExtension.exports.getAPI(1);
+            const repository = git.repositories[0];
+            if (repository) {
+              repository.inputBox.value = message;
+              vscode.window.showInformationMessage('Commit message generated successfully!');
+            }
+          }
+
+          progress.report({ increment: 100 });
+        }
+      );
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      vscode.window.showErrorMessage(`Failed to generate commit message: ${errorMessage}`);
+    }
+  }
+
+  async function configureCommitologist() {
+    try {
+      // AI Provider selection
+      const aiProvider = await vscode.window.showQuickPick(
+        [
+          { label: 'OpenAI', value: 'openai' },
+          { label: 'Anthropic', value: 'anthropic' },
+          { label: 'Google Gemini', value: 'gemini' },
+          { label: 'OpenRouter', value: 'openrouter' },
+          { label: 'Ollama (Local)', value: 'ollama' },
+        ],
+        {
+          placeHolder: 'Select AI provider',
+        }
+      );
+
+      if (!aiProvider) return;
+
+      // Model selection
+      const defaultModel = DEFAULT_MODELS[aiProvider.value as AIProviderType];
+      const model = await vscode.window.showInputBox({
+        prompt: `Enter model name (default: ${defaultModel})`,
+        value: defaultModel,
+      });
+
+      if (!model) return;
+
+      // Prompt preset selection
+      const promptPreset = await vscode.window.showQuickPick(
+        [
+          { label: 'Conventional Commits', value: 'conventional' },
+          { label: 'Descriptive', value: 'descriptive' },
+          { label: 'Concise', value: 'concise' },
+          { label: 'Custom', value: 'custom' },
+        ],
+        {
+          placeHolder: 'Select prompt preset',
+        }
+      );
+
+      if (!promptPreset) return;
+
+      let customPrompt: string | undefined;
+      if (promptPreset.value === 'custom') {
+        customPrompt = await vscode.window.showInputBox({
+          prompt: 'Enter custom prompt template',
+          placeHolder: 'Write a commit message for the following changes...',
+        });
+        if (!customPrompt) return;
+      }
+
+      // API Key (if needed)
+      let apiKey: string | undefined;
+      if (aiProvider.value !== 'ollama') {
+        apiKey = await vscode.window.showInputBox({
+          prompt: `Enter ${aiProvider.label} API key`,
+          password: true,
+        });
+        if (!apiKey) return;
+      }
+
+      // Ollama URL (if needed)
+      let ollamaUrl: string | undefined;
+      if (aiProvider.value === 'ollama') {
+        ollamaUrl = await vscode.window.showInputBox({
+          prompt: 'Enter Ollama server URL',
+          value: 'http://localhost:11434',
+        });
+        if (!ollamaUrl) return;
+      }
+
+      // Save configuration
+      const config = vscode.workspace.getConfiguration('commitologist');
+      await config.update('aiProvider', aiProvider.value, vscode.ConfigurationTarget.Global);
+      await config.update('model', model, vscode.ConfigurationTarget.Global);
+      await config.update('promptPreset', promptPreset.value, vscode.ConfigurationTarget.Global);
+      
+      if (customPrompt) {
+        await config.update('customPrompt', customPrompt, vscode.ConfigurationTarget.Global);
+      }
+      
+      if (apiKey) {
+        await context.secrets.store(`commitologist.${aiProvider.value}.apiKey`, apiKey);
+      }
+      
+      if (ollamaUrl) {
+        await config.update('ollamaUrl', ollamaUrl, vscode.ConfigurationTarget.Global);
+      }
+
+      vscode.window.showInformationMessage('Commitologist configured successfully!');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      vscode.window.showErrorMessage(`Failed to configure Commitologist: ${errorMessage}`);
+    }
+  }
+
+  async function getVSCodeConfig(): Promise<Config | null> {
+    const config = vscode.workspace.getConfiguration('commitologist');
+    
+    const aiProvider = config.get<AIProviderType>('aiProvider');
+    const model = config.get<string>('model');
+    const promptPreset = config.get<string>('promptPreset');
+    const customPrompt = config.get<string>('customPrompt');
+    const includeUnstagedFiles = config.get<boolean>('includeUnstagedFiles');
+    const ollamaUrl = config.get<string>('ollamaUrl');
+
+    if (!aiProvider || !model || !promptPreset) {
+      return null;
+    }
+
+    let apiKey: string | undefined;
+    if (aiProvider !== 'ollama') {
+      apiKey = await context.secrets.get(`commitologist.${aiProvider}.apiKey`);
+      if (!apiKey) {
+        return null;
+      }
+    }
+
+    return {
+      aiProvider,
+      model,
+      promptPreset,
+      customPrompt,
+      includeUnstagedFiles: includeUnstagedFiles ?? true,
+      ollamaUrl,
+      apiKey,
+    } as Config;
+  }
+}
+
+export function deactivate() {}

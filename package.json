@@ -14,7 +14,9 @@
     "test": "bun test",
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
-    "format": "biome format --write src"
+    "format": "biome format --write src",
+    "build:extension": "cd src/extension && tsc",
+    "watch:extension": "cd src/extension && tsc --watch"
   },
   "keywords": [
     "commit",
@@ -29,9 +31,13 @@
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
     "@types/node": "^24.0.14",
+    "@types/vscode": "^1.102.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "commander": "^14.0.0"
-  }
+  },
+  "extensionDependencies": [
+    "vscode.git"
+  ]
 }
