@@ -77,7 +77,6 @@ export function activate(context: vscode.ExtensionContext) {
             const repository = git.repositories[0];
             if (repository) {
               repository.inputBox.value = message;
-              vscode.window.showInformationMessage('Commit message generated successfully!');
             }
           }
 
@@ -179,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
         await config.update('ollamaUrl', ollamaUrl, vscode.ConfigurationTarget.Global);
       }
 
-      vscode.window.showInformationMessage('Commitologist configured successfully!');
+      // Configuration success notification will auto-dismiss
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       vscode.window.showErrorMessage(`Failed to configure Commitologist: ${errorMessage}`);

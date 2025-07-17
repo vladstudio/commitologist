@@ -22,7 +22,7 @@
         "title": "Generate Commit Message",
         "icon": {
           "light": "../../icons/icon.svg",
-          "dark": "../../icons/icon.svg"
+          "dark": "../../icons/icon-dark.svg"
         }
       },
       {
