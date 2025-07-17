@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate intelligent commit messages using AI",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {
@@ -32,8 +32,8 @@
         "command": "commitologist.generateMessage",
         "title": "Commitologist: Generate Commit Message",
         "icon": {
-          "light": "../../icons/icon.svg",
-          "dark": "../../icons/icon-dark.svg"
+          "light": "icon.svg",
+          "dark": "icon-dark.svg"
         }
       },
       {
