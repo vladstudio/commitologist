@@ -43,19 +43,38 @@ export async function generateCommitMessage(options: GenerateOptions): Promise<v
       return;
     }
 
-    // Check for staged changes
+    // Check for changes (staged or unstaged based on config)
     const hasStagedChanges = await gitAnalyzer.hasStagedChanges();
-    if (!hasStagedChanges) {
-      console.log('📝 No staged changes found.');
-      console.log('💡 Stage some changes with `git add` and try again.');
+    const hasUnstagedChanges = config.includeUnstagedFiles ? await gitAnalyzer.hasChanges() : false;
+    
+    if (!hasStagedChanges && !hasUnstagedChanges) {
+      console.log('📝 No changes found.');
+      if (config.includeUnstagedFiles) {
+        console.log('💡 Make some changes and try again.');
+      } else {
+        console.log('💡 Stage some changes with `git add` and try again.');
+      }
       return;
+    }
+    
+    if (!hasStagedChanges && config.includeUnstagedFiles) {
+      console.log('📝 No staged changes found, but analyzing unstaged changes...');
     }
 
     const gitDiff = await gitAnalyzer.analyzeChanges(config.includeUnstagedFiles);
     const stagedFiles = gitDiff.stagedFiles;
+    const unstagedFiles = gitDiff.unstagedFiles;
 
-    console.log(`📁 Found ${stagedFiles.length} staged file(s):`);
-    stagedFiles.forEach((file) => console.log(`   • ${file}`));
+    if (stagedFiles.length > 0) {
+      console.log(`📁 Found ${stagedFiles.length} staged file(s):`);
+      stagedFiles.forEach((file) => console.log(`   • ${file}`));
+    }
+    
+    if (unstagedFiles.length > 0) {
+      console.log(`📄 Found ${unstagedFiles.length} unstaged file(s):`);
+      unstagedFiles.forEach((file) => console.log(`   • ${file}`));
+    }
+    
     console.log();
 
     // Generate commit message
