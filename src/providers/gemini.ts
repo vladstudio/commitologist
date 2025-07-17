@@ -141,41 +141,7 @@ export class GeminiProvider extends AIProvider {
       }
 
       const data = (await response.json()) as GeminiResponse;
-
-      if (!data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
-        throw createProviderError('NO_CANDIDATES', 'No candidates in response from Gemini API');
-      }
-
-      const candidate = data.candidates[0];
-
-      if (!candidate) {
-        throw createProviderError('NO_CANDIDATE', 'No candidate in response from Gemini API');
-      }
-
-      // Check for finish reason issues
-      if (candidate.finishReason === 'MAX_TOKENS') {
-        throw createProviderError('MAX_TOKENS', 'Response was truncated due to token limit');
-      }
-
-      if (candidate.finishReason === 'SAFETY') {
-        throw createProviderError('SAFETY', 'Response blocked due to safety filters');
-      }
-
-      // Handle different response structures
-      let message: string | undefined;
-
-      if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
-        message = candidate.content.parts[0]?.text?.trim();
-      } else if (candidate.content?.text) {
-        message = candidate.content.text.trim();
-      } else if (candidate.text) {
-        message = candidate.text.trim();
-      }
-
-      if (!message) {
-        console.log('Debug - Full response:', JSON.stringify(data, null, 2));
-        throw createProviderError('NO_RESPONSE', 'No commit message generated');
-      }
+      const message = this.parseGeminiResponse(data);
 
       return {
         message,
@@ -190,5 +156,59 @@ export class GeminiProvider extends AIProvider {
 
   getSupportedModels(): string[] {
     return [...this.supportedModels];
+  }
+
+  private parseGeminiResponse(data: GeminiResponse): string {
+    // Validate candidates exist
+    if (!data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
+      throw createProviderError('NO_CANDIDATES', 'No candidates in response from Gemini API');
+    }
+
+    const candidate = data.candidates[0];
+    if (!candidate) {
+      throw createProviderError('NO_CANDIDATE', 'No candidate in response from Gemini API');
+    }
+
+    // Check for finish reason issues
+    this.validateFinishReason(candidate);
+
+    // Extract message from various response structures
+    const message = this.extractMessageFromCandidate(candidate);
+
+    if (!message) {
+      console.log('Debug - Full response:', JSON.stringify(data, null, 2));
+      throw createProviderError('NO_RESPONSE', 'No commit message generated');
+    }
+
+    return message;
+  }
+
+  private validateFinishReason(candidate: GeminiResponse['candidates'][0]): void {
+    if (candidate.finishReason === 'MAX_TOKENS') {
+      throw createProviderError('MAX_TOKENS', 'Response was truncated due to token limit');
+    }
+
+    if (candidate.finishReason === 'SAFETY') {
+      throw createProviderError('SAFETY', 'Response blocked due to safety filters');
+    }
+  }
+
+  private extractMessageFromCandidate(
+    candidate: GeminiResponse['candidates'][0]
+  ): string | undefined {
+    // Try different response structures in order of preference
+    if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
+      return candidate.content.parts[0]?.text?.trim();
+    }
+
+    if (candidate.content?.text) {
+      return candidate.content.text.trim();
+    }
+
+    if (candidate.text) {
+      return candidate.text.trim();
+    }
+
+    return undefined;
   }
 }
