@@ -3,18 +3,29 @@
   "displayName": "Commitologist",
   "description": "Generate intelligent commit messages using AI",
   "version": "0.1.0",
-  "publisher": "commitologist",
-  "icon": "../../icons/icon.svg",
+  "publisher": "vladstudio",
+  "icon": "logo.png",
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "*"
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "openai",
+    "anthropic",
+    "gemini",
+    "commit-message",
+    "productivity"
   ],
-  "main": "../../dist/extension/extension/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vladstudio/commitologist.git"
+  },
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
