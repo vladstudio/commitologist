@@ -18,31 +18,33 @@
   "contributes": {
     "commands": [
       {
-        "command": "commitologist.generateCommitMessage",
+        "command": "commitologist.generateMessage",
         "title": "Generate Commit Message",
-        "icon": "$(git-commit)"
+        "icon": {
+          "light": "../../icons/icon.svg",
+          "dark": "../../icons/icon.svg"
+        }
       },
       {
         "command": "commitologist.configure",
         "title": "Configure Commitologist"
-      },
-      {
-        "command": "commitologist.test",
-        "title": "Test Commitologist Extension"
       }
     ],
     "menus": {
       "scm/title": [
         {
-          "command": "commitologist.generateCommitMessage",
+          "command": "commitologist.generateMessage",
           "when": "scmProvider == git",
           "group": "navigation"
         }
       ],
       "commandPalette": [
         {
-          "command": "commitologist.generateCommitMessage",
+          "command": "commitologist.generateMessage",
           "when": "scmProvider == git"
+        },
+        {
+          "command": "commitologist.configure"
         }
       ]
     },

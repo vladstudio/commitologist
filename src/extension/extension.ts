@@ -8,17 +8,9 @@ import { Config, AIProviderType, DEFAULT_MODELS } from '../core/types.js';
 export function activate(context: vscode.ExtensionContext) {
   console.log('Commitologist extension is activating...');
 
-  // Test command to verify extension is working
-  const testCommand = vscode.commands.registerCommand(
-    'commitologist.test',
-    () => {
-      vscode.window.showInformationMessage('Commitologist extension is working!');
-    }
-  );
-
   // Register commands
   const generateCommand = vscode.commands.registerCommand(
-    'commitologist.generateCommitMessage',
+    'commitologist.generateMessage',
     async () => {
       await generateCommitMessage();
     }
@@ -31,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(testCommand, generateCommand, configureCommand);
+  context.subscriptions.push(generateCommand, configureCommand);
   
   console.log('Commitologist extension activated successfully!');
 
@@ -58,9 +50,8 @@ export function activate(context: vscode.ExtensionContext) {
           // Get configuration
           const config = await getVSCodeConfig();
           if (!config) {
-            vscode.window.showErrorMessage(
-              'Commitologist is not configured. Please run "Configure Commitologist" first.'
-            );
+            // If not configured, show config wizard
+            await configureCommitologist();
             return;
           }
 
