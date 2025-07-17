@@ -15,13 +15,18 @@ interface GeminiRequest {
 
 interface GeminiResponse {
   candidates: Array<{
-    content: {
-      parts: Array<{ text: string }>;
+    content?: {
+      parts?: Array<{ text: string }>;
+      text?: string;
+      role?: string;
     };
+    text?: string;
+    finishReason?: string;
+    index?: number;
   }>;
-  usageMetadata: {
+  usageMetadata?: {
     promptTokenCount: number;
-    candidatesTokenCount: number;
+    candidatesTokenCount?: number;
     totalTokenCount: number;
   };
 }
@@ -98,8 +103,7 @@ export class GeminiProvider extends AIProvider {
       throw this.handleError(new Error('Google Gemini API key is required'));
     }
 
-    const systemPrompt =
-      'You are an expert at writing clear, concise commit messages. Generate a commit message based on the provided git diff.';
+    const systemPrompt = 'Generate a concise commit message from this git diff:';
     const fullPrompt = `${systemPrompt}\n\n${prompt}`;
 
     const request: GeminiRequest = {
@@ -110,7 +114,7 @@ export class GeminiProvider extends AIProvider {
       ],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 150,
+        maxOutputTokens: 2000,
       },
     };
 
@@ -143,18 +147,48 @@ export class GeminiProvider extends AIProvider {
       }
 
       const data = (await response.json()) as GeminiResponse;
-      const message = data.candidates[0]?.content?.parts[0]?.text?.trim();
+      
+      if (!data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
+        throw this.createProviderError('NO_CANDIDATES', 'No candidates in response from Gemini API');
+      }
+      
+      const candidate = data.candidates[0];
+      
+      if (!candidate) {
+        throw this.createProviderError('NO_CANDIDATE', 'No candidate in response from Gemini API');
+      }
+      
+      // Check for finish reason issues
+      if (candidate.finishReason === 'MAX_TOKENS') {
+        throw this.createProviderError('MAX_TOKENS', 'Response was truncated due to token limit');
+      }
+      
+      if (candidate.finishReason === 'SAFETY') {
+        throw this.createProviderError('SAFETY', 'Response blocked due to safety filters');
+      }
+      
+      // Handle different response structures
+      let message: string | undefined;
+      
+      if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
+        message = candidate.content.parts[0]?.text?.trim();
+      } else if (candidate.content?.text) {
+        message = candidate.content.text.trim();
+      } else if (candidate.text) {
+        message = candidate.text.trim();
+      }
 
       if (!message) {
+        console.log('Debug - Full response:', JSON.stringify(data, null, 2));
         throw this.createProviderError('NO_RESPONSE', 'No commit message generated');
       }
 
       return {
         message,
         usage: {
-          promptTokens: data.usageMetadata.promptTokenCount,
-          completionTokens: data.usageMetadata.candidatesTokenCount,
-          totalTokens: data.usageMetadata.totalTokenCount,
+          promptTokens: data.usageMetadata?.promptTokenCount || 0,
+          completionTokens: data.usageMetadata?.candidatesTokenCount || 0,
+          totalTokens: data.usageMetadata?.totalTokenCount || 0,
         },
       };
     } catch (error) {
