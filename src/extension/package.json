@@ -28,6 +28,14 @@
       {
         "command": "commitologist.configure",
         "title": "Configure Commitologist"
+      },
+      {
+        "command": "commitologist.configureProvider",
+        "title": "Configure Provider Settings"
+      },
+      {
+        "command": "commitologist.configurePreset",
+        "title": "Configure Preset Settings"
       }
     ],
     "menus": {
@@ -45,6 +53,12 @@
         },
         {
           "command": "commitologist.configure"
+        },
+        {
+          "command": "commitologist.configureProvider"
+        },
+        {
+          "command": "commitologist.configurePreset"
         }
       ]
     },

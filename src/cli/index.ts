@@ -2,8 +2,9 @@
 
 import { Command } from 'commander';
 import { ConfigManager } from '../core/ConfigManager.js';
-import { configCommand } from './config.js';
 import { generateCommitMessage } from './generate.js';
+import { presetCommand } from './preset.js';
+import { providerCommand } from './provider.js';
 import { setupWizard } from './setup.js';
 
 const program = new Command();
@@ -23,24 +24,35 @@ program
   });
 
 program
-  .command('config')
-  .description('Configure Commitologist settings')
+  .command('setup')
+  .description('Run the interactive setup wizard')
+  .action(async () => {
+    await setupWizard();
+  });
+
+program
+  .command('provider')
+  .description('Configure AI provider settings')
   .option(
     '-p, --provider <provider>',
     'Set AI provider (openai, anthropic, gemini, openrouter, ollama)'
   )
   .option('-k, --api-key <key>', 'Set API key')
   .option('-m, --model <model>', 'Set model')
-  .option('-r, --reset', 'Reset configuration to defaults')
+  .option('-u, --ollama-url <url>', 'Set Ollama server URL')
   .action(async (options) => {
-    await configCommand(options);
+    await providerCommand(options);
   });
 
 program
-  .command('setup')
-  .description('Run the interactive setup wizard')
-  .action(async () => {
-    await setupWizard();
+  .command('preset')
+  .description('Configure prompt preset and behavior settings')
+  .option('-p, --preset <preset>', 'Set prompt preset (conventional, descriptive, concise, custom)')
+  .option('-c, --custom-prompt <prompt>', 'Set custom prompt template')
+  .option('--include-unstaged', 'Include unstaged files in analysis')
+  .option('--no-include-unstaged', 'Exclude unstaged files from analysis')
+  .action(async (options) => {
+    await presetCommand(options);
   });
 
 // Default command when no subcommand is provided
