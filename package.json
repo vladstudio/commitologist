@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "A tool that helps you write better commit messages using AI",
   "main": "dist/index.js",
+  "bin": {
+    "commitologist": "dist/cli/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
