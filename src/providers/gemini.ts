@@ -1,5 +1,10 @@
 import { AIProvider } from '../core/AIProvider.js';
-import type { AIProviderError, AIProviderResponse } from '../core/types.js';
+import {
+  createProviderError,
+  getSystemPrompt,
+  parseJsonErrorResponse,
+} from '../core/ProviderUtils.js';
+import type { AIProviderResponse } from '../core/types.js';
 
 interface GeminiContent {
   parts: Array<{ text: string }>;
@@ -103,7 +108,7 @@ export class GeminiProvider extends AIProvider {
       throw this.handleError(new Error('Google Gemini API key is required'));
     }
 
-    const systemPrompt = 'Generate a concise commit message from this git diff:';
+    const systemPrompt = getSystemPrompt();
     const fullPrompt = `${systemPrompt}\n\n${prompt}`;
 
     const request: GeminiRequest = {
@@ -118,7 +123,7 @@ export class GeminiProvider extends AIProvider {
       },
     };
 
-    try {
+    return this.retryWithBackoff(async () => {
       const response = await fetch(
         `${this.baseURL}/models/${this.config.model}:generateContent?key=${this.config.apiKey}`,
         {
@@ -131,45 +136,34 @@ export class GeminiProvider extends AIProvider {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        let errorMessage = `Gemini API error: ${response.status} ${response.statusText}`;
-
-        try {
-          const errorData = JSON.parse(errorText);
-          if (errorData.error?.message) {
-            errorMessage = errorData.error.message;
-          }
-        } catch {
-          // Keep the default error message if JSON parsing fails
-        }
-
-        throw this.createProviderError(response.status, errorMessage);
+        const errorMessage = await parseJsonErrorResponse(response);
+        throw createProviderError(response.status, errorMessage);
       }
 
       const data = (await response.json()) as GeminiResponse;
-      
+
       if (!data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
-        throw this.createProviderError('NO_CANDIDATES', 'No candidates in response from Gemini API');
+        throw createProviderError('NO_CANDIDATES', 'No candidates in response from Gemini API');
       }
-      
+
       const candidate = data.candidates[0];
-      
+
       if (!candidate) {
-        throw this.createProviderError('NO_CANDIDATE', 'No candidate in response from Gemini API');
+        throw createProviderError('NO_CANDIDATE', 'No candidate in response from Gemini API');
       }
-      
+
       // Check for finish reason issues
       if (candidate.finishReason === 'MAX_TOKENS') {
-        throw this.createProviderError('MAX_TOKENS', 'Response was truncated due to token limit');
+        throw createProviderError('MAX_TOKENS', 'Response was truncated due to token limit');
       }
-      
+
       if (candidate.finishReason === 'SAFETY') {
-        throw this.createProviderError('SAFETY', 'Response blocked due to safety filters');
+        throw createProviderError('SAFETY', 'Response blocked due to safety filters');
       }
-      
+
       // Handle different response structures
       let message: string | undefined;
-      
+
       if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
         message = candidate.content.parts[0]?.text?.trim();
       } else if (candidate.content?.text) {
@@ -180,7 +174,7 @@ export class GeminiProvider extends AIProvider {
 
       if (!message) {
         console.log('Debug - Full response:', JSON.stringify(data, null, 2));
-        throw this.createProviderError('NO_RESPONSE', 'No commit message generated');
+        throw createProviderError('NO_RESPONSE', 'No commit message generated');
       }
 
       return {
@@ -191,40 +185,10 @@ export class GeminiProvider extends AIProvider {
           totalTokens: data.usageMetadata?.totalTokenCount || 0,
         },
       };
-    } catch (error) {
-      if (error instanceof Error && 'code' in error) {
-        throw error;
-      }
-      throw this.handleError(error);
-    }
+    });
   }
 
   getSupportedModels(): string[] {
     return [...this.supportedModels];
-  }
-
-  private createProviderError(code: string | number, message: string): AIProviderError {
-    const errorCode = typeof code === 'number' ? this.getErrorCodeFromStatus(code) : code;
-    return {
-      code: errorCode,
-      message,
-    };
-  }
-
-  private getErrorCodeFromStatus(status: number): string {
-    switch (status) {
-      case 401:
-      case 403:
-        return 'INVALID_API_KEY';
-      case 429:
-        return 'RATE_LIMIT_EXCEEDED';
-      case 500:
-      case 502:
-      case 503:
-      case 504:
-        return 'SERVICE_UNAVAILABLE';
-      default:
-        return 'API_ERROR';
-    }
   }
 }

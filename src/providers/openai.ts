@@ -1,5 +1,10 @@
 import { AIProvider } from '../core/AIProvider.js';
-import type { AIProviderError, AIProviderResponse } from '../core/types.js';
+import {
+  createProviderError,
+  getSystemPrompt,
+  parseJsonErrorResponse,
+} from '../core/ProviderUtils.js';
+import type { AIProviderResponse } from '../core/types.js';
 
 interface OpenAIMessage {
   role: 'system' | 'user' | 'assistant';
@@ -91,8 +96,7 @@ export class OpenAIProvider extends AIProvider {
       messages: [
         {
           role: 'system',
-          content:
-            'You are an expert at writing clear, concise commit messages. Generate a commit message based on the provided git diff.',
+          content: getSystemPrompt(),
         },
         {
           role: 'user',
@@ -114,26 +118,15 @@ export class OpenAIProvider extends AIProvider {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        let errorMessage = `OpenAI API error: ${response.status} ${response.statusText}`;
-
-        try {
-          const errorData = JSON.parse(errorText);
-          if (errorData.error?.message) {
-            errorMessage = errorData.error.message;
-          }
-        } catch {
-          // Keep the default error message if JSON parsing fails
-        }
-
-        throw this.createProviderError(response.status, errorMessage);
+        const errorMessage = await parseJsonErrorResponse(response);
+        throw createProviderError(response.status, errorMessage);
       }
 
       const data = (await response.json()) as OpenAIResponse;
       const message = data.choices[0]?.message?.content?.trim();
 
       if (!message) {
-        throw this.createProviderError('NO_RESPONSE', 'No commit message generated');
+        throw createProviderError('NO_RESPONSE', 'No commit message generated');
       }
 
       return {
@@ -149,31 +142,5 @@ export class OpenAIProvider extends AIProvider {
 
   getSupportedModels(): string[] {
     return [...this.supportedModels];
-  }
-
-  private createProviderError(code: string | number, message: string): AIProviderError {
-    const errorCode = typeof code === 'number' ? this.getErrorCodeFromStatus(code) : code;
-    return {
-      code: errorCode,
-      message,
-    };
-  }
-
-  private getErrorCodeFromStatus(status: number): string {
-    switch (status) {
-      case 401:
-        return 'INVALID_API_KEY';
-      case 403:
-        return 'INSUFFICIENT_PERMISSIONS';
-      case 429:
-        return 'RATE_LIMIT_EXCEEDED';
-      case 500:
-      case 502:
-      case 503:
-      case 504:
-        return 'SERVICE_UNAVAILABLE';
-      default:
-        return 'API_ERROR';
-    }
   }
 }

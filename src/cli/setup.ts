@@ -1,6 +1,7 @@
 import { ConfigManager } from '../core/ConfigManager.js';
 import { PromptManager } from '../core/PromptManager.js';
 import type { Config } from '../core/types.js';
+import { DEFAULT_MODELS } from '../core/types.js';
 import { prompt } from './utils.js';
 
 const AI_PROVIDERS = [
@@ -10,14 +11,6 @@ const AI_PROVIDERS = [
   { name: 'OpenRouter', value: 'openrouter' },
   { name: 'Ollama (Local)', value: 'ollama' },
 ] as const;
-
-const DEFAULT_MODELS = {
-  openai: 'gpt-4o-mini',
-  anthropic: 'claude-3-5-sonnet-latest',
-  gemini: 'gemini-2.5-flash',
-  openrouter: 'openai/gpt-4o-mini',
-  ollama: 'llama3.2',
-} as const;
 
 export async function setupWizard(): Promise<void> {
   console.log('🔧 Commitologist Setup Wizard');
