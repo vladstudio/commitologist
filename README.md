@@ -1,11 +1,11 @@
 # Commitologist
 
-AI-powered commit messages for VSCode and CLI.
+AI-powered commit messages for VSCode.
 
 ## Features
 
 - Generate commit messages with OpenAI, Anthropic, Gemini, OpenRouter, or Ollama
-- Use as VSCode extension or CLI tool
+- VSCode extension
 - Choose from preset prompts or create custom ones
 - Include/exclude unstaged files, pick your model
 - Built with TypeScript and Bun
@@ -20,12 +20,10 @@ AI-powered commit messages for VSCode and CLI.
 
 ## Installation
 
-**CLI**: `npm install -g commitologist` or `npx commitologist`  
 **VSCode**: Search "Commitologist" in marketplace
 
 ## Usage
 
-**CLI**: Run `commitologist` to generate, `commitologist config` to configure  
 **VSCode**: Click Commitologist button in Source Control panel
 
 ## Configuration

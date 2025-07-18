@@ -1,19 +1,17 @@
 # Commitologist Development Guide
 
 ## Project Overview
-Commitologist is a TypeScript tool that generates intelligent commit messages using AI providers. It's designed to work as both a VSCode extension and CLI tool.
+Commitologist is a TypeScript VSCode extension that generates intelligent commit messages using AI providers.
 
 ## Architecture
 - **Core Library** (`src/core/`): Shared business logic
 - **AI Providers** (`src/providers/`): AI service integrations
 - **VSCode Extension** (`src/extension/`): VSCode integration
-- **CLI Tool** (`src/cli/`): Command line interface
 
 ## Technology Stack
 - **Runtime**: Bun (package manager and runtime)
 - **Language**: TypeScript with strict configuration
 - **Linting/Formatting**: Biome 2.1.1
-- **Dependencies**: Commander.js for CLI argument parsing
 
 ## Development Commands
 ```bash
@@ -52,12 +50,11 @@ src/
 │   └── index.ts            # Core exports
 ├── providers/              # AI provider implementations
 ├── extension/              # VSCode extension
-├── cli/                    # CLI application
 └── index.ts               # Main entry point
 ```
 
 ## Configuration
-- **Storage**: `~/.commitologist/config.json` (CLI) or VSCode settings
+- **Storage**: VSCode settings
 - **Supported Providers**: OpenAI, Anthropic, Gemini, OpenRouter, Ollama
 - **Default Models**: 
   - OpenAI: `gpt-4o-mini`
@@ -77,10 +74,9 @@ src/
 
 **Next Phases**:
 - Phase 2: AI Provider Integration
-- Phase 3: CLI Implementation
-- Phase 4: VSCode Extension
-- Phase 5: Additional Providers
-- Phase 6: Polish and Testing
+- Phase 3: VSCode Extension
+- Phase 4: Additional Providers
+- Phase 5: Polish and Testing
 
 ## Code Style
 - Use strict TypeScript configuration
