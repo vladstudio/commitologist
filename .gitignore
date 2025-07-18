@@ -11,3 +11,4 @@ coverage/
 **/*.map
 **/*.d.ts
 src/extension/*.vsix
+.vscode

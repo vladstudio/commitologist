@@ -6,7 +6,9 @@ import { type AIProviderType, type Config, DEFAULT_MODELS } from './types.js';
 import { createProvider } from './providers/index.js';
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Commitologist extension is activating...');
+  // Create output channel for logging
+  const outputChannel = vscode.window.createOutputChannel('Commitologist');
+  outputChannel.appendLine('Commitologist extension is activating...');
 
   // Register commands
   const generateCommand = vscode.commands.registerCommand(
@@ -34,12 +36,14 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     generateCommand,
     configureProviderCommand,
-    configurePresetCommand
+    configurePresetCommand,
+    outputChannel
   );
 
-  console.log('Commitologist extension activated successfully!');
+  outputChannel.appendLine('Commitologist extension activated successfully!');
 
   async function generateCommitMessage() {
+    outputChannel.appendLine('Starting commit message generation...');
     try {
       // Show progress indicator
       await vscode.window.withProgress(
@@ -60,12 +64,15 @@ export function activate(context: vscode.ExtensionContext) {
           progress.report({ increment: 20 });
 
           // Get configuration
+          outputChannel.appendLine('Loading configuration...');
           const config = await getVSCodeConfig();
           if (!config) {
             // If not configured, show provider config first
+            outputChannel.appendLine('Configuration not found, prompting user to configure');
             vscode.window.showErrorMessage('Please configure Commitologist first using "Commitologist: Configure Provider Settings"');
             return;
           }
+          outputChannel.appendLine(`Configuration loaded: provider=${config.aiProvider}, model=${config.model}`);
 
           progress.report({ increment: 40 });
 
@@ -83,7 +90,9 @@ export function activate(context: vscode.ExtensionContext) {
           progress.report({ increment: 60 });
 
           // Generate commit message
+          outputChannel.appendLine('Generating commit message...');
           const message = await messageGenerator.generateCommitMessage();
+          outputChannel.appendLine(`Generated message: ${message}`);
 
           progress.report({ increment: 80 });
 
@@ -94,7 +103,12 @@ export function activate(context: vscode.ExtensionContext) {
             const repository = git.repositories[0];
             if (repository) {
               repository.inputBox.value = message;
+              outputChannel.appendLine('Commit message inserted into Source Control input');
+            } else {
+              outputChannel.appendLine('No Git repository found');
             }
+          } else {
+            outputChannel.appendLine('Git extension not active');
           }
 
           progress.report({ increment: 100 });
@@ -102,6 +116,10 @@ export function activate(context: vscode.ExtensionContext) {
       );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      outputChannel.appendLine(`Error generating commit message: ${errorMessage}`);
+      if (error instanceof Error && error.stack) {
+        outputChannel.appendLine(`Stack trace: ${error.stack}`);
+      }
       vscode.window.showErrorMessage(`Failed to generate commit message: ${errorMessage}`);
     }
   }
