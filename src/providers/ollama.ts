@@ -1,9 +1,5 @@
 import { AIProvider } from '../AIProvider.js';
-import {
-  createProviderError,
-  getSystemPrompt,
-  parseJsonErrorResponse,
-} from '../ProviderUtils.js';
+import { createProviderError, getSystemPrompt, parseJsonErrorResponse } from '../ProviderUtils.js';
 import type { AIProviderResponse } from '../types.js';
 
 interface OllamaMessage {
@@ -35,7 +31,7 @@ interface OllamaResponse {
 }
 
 export class OllamaProvider extends AIProvider {
-  private readonly supportedModels = [
+  private readonly recommendedModels = [
     // Llama 3 Series
     'llama3.3',
     'llama3.2',
@@ -73,10 +69,6 @@ export class OllamaProvider extends AIProvider {
   async validateConfig(): Promise<void> {
     if (!this.config.model) {
       throw new Error('Ollama model is required');
-    }
-
-    if (!this.supportedModels.includes(this.config.model)) {
-      throw new Error(`Unsupported Ollama model: ${this.config.model}`);
     }
 
     // Test connection to Ollama instance
@@ -166,7 +158,7 @@ export class OllamaProvider extends AIProvider {
     });
   }
 
-  getSupportedModels(): string[] {
-    return [...this.supportedModels];
+  getRecommendedModels(): string[] {
+    return [...this.recommendedModels];
   }
 }

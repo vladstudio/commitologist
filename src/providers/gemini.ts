@@ -1,9 +1,5 @@
 import { AIProvider } from '../AIProvider.js';
-import {
-  createProviderError,
-  getSystemPrompt,
-  parseJsonErrorResponse,
-} from '../ProviderUtils.js';
+import { createProviderError, getSystemPrompt, parseJsonErrorResponse } from '../ProviderUtils.js';
 import type { AIProviderResponse } from '../types.js';
 
 interface GeminiContent {
@@ -38,7 +34,7 @@ interface GeminiResponse {
 
 export class GeminiProvider extends AIProvider {
   private readonly baseURL = 'https://generativelanguage.googleapis.com/v1beta';
-  private readonly supportedModels = [
+  private readonly recommendedModels = [
     // Gemini 2.5 Series (Latest)
     'gemini-2.5-pro',
     'gemini-2.5-flash',
@@ -61,10 +57,6 @@ export class GeminiProvider extends AIProvider {
 
     if (!this.config.model) {
       throw new Error('Gemini model is required');
-    }
-
-    if (!this.supportedModels.includes(this.config.model)) {
-      throw new Error(`Unsupported Gemini model: ${this.config.model}`);
     }
 
     // Test API key by making a simple request
@@ -154,8 +146,8 @@ export class GeminiProvider extends AIProvider {
     });
   }
 
-  getSupportedModels(): string[] {
-    return [...this.supportedModels];
+  getRecommendedModels(): string[] {
+    return [...this.recommendedModels];
   }
 
   private parseGeminiResponse(data: GeminiResponse): string {

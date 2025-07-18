@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { GitAnalyzer } from './GitAnalyzer.js';
 import { MessageGenerator } from './MessageGenerator.js';
 import { PromptManager } from './PromptManager.js';
-import { type AIProviderType, type Config, DEFAULT_MODELS } from './types.js';
 import { createProvider } from './providers/index.js';
+import { type AIProviderType, type Config } from './types.js';
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel for logging
@@ -17,7 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
       await generateCommitMessage();
     }
   );
-
 
   const configureProviderCommand = vscode.commands.registerCommand(
     'commitologist.configureProvider',
@@ -69,10 +68,14 @@ export function activate(context: vscode.ExtensionContext) {
           if (!config) {
             // If not configured, show provider config first
             outputChannel.appendLine('Configuration not found, prompting user to configure');
-            vscode.window.showErrorMessage('Please configure Commitologist first using "Commitologist: Configure Provider Settings"');
+            vscode.window.showErrorMessage(
+              'Please configure Commitologist first using "Commitologist: Configure Provider Settings"'
+            );
             return;
           }
-          outputChannel.appendLine(`Configuration loaded: provider=${config.aiProvider}, model=${config.model}`);
+          outputChannel.appendLine(
+            `Configuration loaded: provider=${config.aiProvider}, model=${config.model}`
+          );
 
           progress.report({ increment: 40 });
 
@@ -124,7 +127,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }
 
-
   async function configureProvider() {
     try {
       // AI Provider selection
@@ -143,14 +145,37 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (!aiProvider) return;
 
-      // Model selection
-      const defaultModel = DEFAULT_MODELS[aiProvider.value as AIProviderType];
-      const model = await vscode.window.showInputBox({
-        prompt: `Enter model name (default: ${defaultModel})`,
-        value: defaultModel,
+      // Model selection - show recommended models + Other option
+      const tempProvider = createProvider({
+        aiProvider: aiProvider.value as AIProviderType,
+        model: 'temp', // Temporary, just to get the provider instance
+        promptPreset: 'conventional',
+        includeUnstagedFiles: true,
       });
 
-      if (!model) return;
+      const recommendedModels = tempProvider.getRecommendedModels();
+      const modelOptions = [
+        ...recommendedModels.map((model) => ({ label: model, value: model })),
+        { label: 'Other (Custom)', value: 'OTHER' },
+      ];
+
+      const selectedModelOption = await vscode.window.showQuickPick(modelOptions, {
+        placeHolder: 'Select a model or choose "Other" for custom',
+      });
+
+      if (!selectedModelOption) return;
+
+      let model: string;
+      if (selectedModelOption.value === 'OTHER') {
+        const customModel = await vscode.window.showInputBox({
+          prompt: 'Enter custom model ID',
+          placeHolder: 'e.g., custom-model-name',
+        });
+        if (!customModel) return;
+        model = customModel;
+      } else {
+        model = selectedModelOption.value;
+      }
 
       // API Key (if needed)
       let apiKey: string | undefined;
@@ -186,14 +211,17 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       // Show success notification that auto-dismisses after 3 seconds
-      vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: '✅ Provider configuration saved successfully!',
-        cancellable: false
-      }, async (progress) => {
-        progress.report({ increment: 100 });
-        await new Promise(resolve => setTimeout(resolve, 3000));
-      });
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: '✅ Provider configuration saved successfully!',
+          cancellable: false,
+        },
+        async (progress) => {
+          progress.report({ increment: 100 });
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+        }
+      );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       vscode.window.showErrorMessage(`Failed to configure provider: ${errorMessage}`);
@@ -253,14 +281,17 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       // Show success notification that auto-dismisses after 3 seconds
-      vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: '✅ Preset configuration saved successfully!',
-        cancellable: false
-      }, async (progress) => {
-        progress.report({ increment: 100 });
-        await new Promise(resolve => setTimeout(resolve, 3000));
-      });
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: '✅ Preset configuration saved successfully!',
+          cancellable: false,
+        },
+        async (progress) => {
+          progress.report({ increment: 100 });
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+        }
+      );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       vscode.window.showErrorMessage(`Failed to configure preset: ${errorMessage}`);

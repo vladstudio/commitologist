@@ -1,9 +1,5 @@
 import { AIProvider } from '../AIProvider.js';
-import {
-  createProviderError,
-  getSystemPrompt,
-  parseJsonErrorResponse,
-} from '../ProviderUtils.js';
+import { createProviderError, getSystemPrompt, parseJsonErrorResponse } from '../ProviderUtils.js';
 import type { AIProviderResponse } from '../types.js';
 
 interface OpenAIMessage {
@@ -33,7 +29,7 @@ interface OpenAIResponse {
 
 export class OpenAIProvider extends AIProvider {
   private readonly baseURL = 'https://api.openai.com/v1';
-  private readonly supportedModels = [
+  private readonly recommendedModels = [
     // GPT-4.1 Series (Latest - April 2025)
     'gpt-4.1',
     'gpt-4.1-mini',
@@ -57,10 +53,6 @@ export class OpenAIProvider extends AIProvider {
 
     if (!this.config.model) {
       throw new Error('OpenAI model is required');
-    }
-
-    if (!this.supportedModels.includes(this.config.model)) {
-      throw new Error(`Unsupported OpenAI model: ${this.config.model}`);
     }
 
     // Test API key by making a simple request
@@ -140,7 +132,7 @@ export class OpenAIProvider extends AIProvider {
     });
   }
 
-  getSupportedModels(): string[] {
-    return [...this.supportedModels];
+  getRecommendedModels(): string[] {
+    return [...this.recommendedModels];
   }
 }

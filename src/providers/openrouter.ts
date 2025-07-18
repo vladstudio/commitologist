@@ -1,9 +1,5 @@
 import { AIProvider } from '../AIProvider.js';
-import {
-  createProviderError,
-  getSystemPrompt,
-  parseJsonErrorResponse,
-} from '../ProviderUtils.js';
+import { createProviderError, getSystemPrompt, parseJsonErrorResponse } from '../ProviderUtils.js';
 import type { AIProviderResponse } from '../types.js';
 
 interface OpenRouterMessage {
@@ -33,7 +29,7 @@ interface OpenRouterResponse {
 
 export class OpenRouterProvider extends AIProvider {
   private readonly baseURL = 'https://openrouter.ai/api/v1';
-  private readonly supportedModels = [
+  private readonly recommendedModels = [
     // OpenAI Models
     'openai/gpt-4o',
     'openai/gpt-4o-mini',
@@ -74,10 +70,6 @@ export class OpenRouterProvider extends AIProvider {
 
     if (!this.config.model) {
       throw new Error('OpenRouter model is required');
-    }
-
-    if (!this.supportedModels.includes(this.config.model)) {
-      throw new Error(`Unsupported OpenRouter model: ${this.config.model}`);
     }
 
     // Test API key by making a simple request
@@ -159,7 +151,7 @@ export class OpenRouterProvider extends AIProvider {
     });
   }
 
-  getSupportedModels(): string[] {
-    return [...this.supportedModels];
+  getRecommendedModels(): string[] {
+    return [...this.recommendedModels];
   }
 }

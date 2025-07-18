@@ -11,7 +11,7 @@ export abstract class AIProvider {
 
   abstract generateCommitMessage(prompt: string): Promise<AIProviderResponse>;
 
-  abstract getSupportedModels(): string[];
+  abstract getRecommendedModels(): string[];
 
   protected handleError(error: unknown): AIProviderError {
     if (error instanceof Error) {

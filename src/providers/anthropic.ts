@@ -1,9 +1,5 @@
 import { AIProvider } from '../AIProvider.js';
-import {
-  createProviderError,
-  getSystemPrompt,
-  parseJsonErrorResponse,
-} from '../ProviderUtils.js';
+import { createProviderError, getSystemPrompt, parseJsonErrorResponse } from '../ProviderUtils.js';
 import type { AIProviderResponse } from '../types.js';
 
 interface AnthropicMessage {
@@ -32,7 +28,7 @@ interface AnthropicResponse {
 
 export class AnthropicProvider extends AIProvider {
   private readonly baseURL = 'https://api.anthropic.com/v1';
-  private readonly supportedModels = [
+  private readonly recommendedModels = [
     // Claude 4 Series (Latest)
     'claude-opus-4-20250514',
     'claude-sonnet-4-20250514',
@@ -56,10 +52,6 @@ export class AnthropicProvider extends AIProvider {
 
     if (!this.config.model) {
       throw new Error('Anthropic model is required');
-    }
-
-    if (!this.supportedModels.includes(this.config.model)) {
-      throw new Error(`Unsupported Anthropic model: ${this.config.model}`);
     }
 
     // Test API key by making a simple request
@@ -144,7 +136,7 @@ export class AnthropicProvider extends AIProvider {
     });
   }
 
-  getSupportedModels(): string[] {
-    return [...this.supportedModels];
+  getRecommendedModels(): string[] {
+    return [...this.recommendedModels];
   }
 }
