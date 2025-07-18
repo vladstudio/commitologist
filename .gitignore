@@ -8,4 +8,6 @@ coverage/
 .env.development.local
 .env.test.local
 .env.production.local
+**/*.map
+**/*.d.ts
 src/extension/*.vsix

@@ -4,8 +4,8 @@ export { OllamaProvider } from './ollama.js';
 export { OpenAIProvider } from './openai.js';
 export { OpenRouterProvider } from './openrouter.js';
 
-import type { AIProvider } from '../core/AIProvider.js';
-import type { AIProviderType, Config } from '../core/types.js';
+import type { AIProvider } from '../AIProvider.js';
+import type { AIProviderType, Config } from '../types.js';
 import { AnthropicProvider } from './anthropic.js';
 import { GeminiProvider } from './gemini.js';
 import { OllamaProvider } from './ollama.js';

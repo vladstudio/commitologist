@@ -1,10 +1,10 @@
-import { AIProvider } from '../core/AIProvider.js';
+import { AIProvider } from '../AIProvider.js';
 import {
   createProviderError,
   getSystemPrompt,
   parseJsonErrorResponse,
-} from '../core/ProviderUtils.js';
-import type { AIProviderResponse } from '../core/types.js';
+} from '../ProviderUtils.js';
+import type { AIProviderResponse } from '../types.js';
 
 interface AnthropicMessage {
   role: 'user' | 'assistant';

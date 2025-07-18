@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { GitAnalyzer } from '../core/GitAnalyzer.js';
-import { MessageGenerator } from '../core/MessageGenerator.js';
-import { PromptManager } from '../core/PromptManager.js';
-import { type AIProviderType, type Config, DEFAULT_MODELS } from '../core/types.js';
-import { createProvider } from '../providers/index.js';
+import { GitAnalyzer } from './GitAnalyzer.js';
+import { MessageGenerator } from './MessageGenerator.js';
+import { PromptManager } from './PromptManager.js';
+import { type AIProviderType, type Config, DEFAULT_MODELS } from './types.js';
+import { createProvider } from './providers/index.js';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('Commitologist extension is activating...');
