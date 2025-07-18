@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate intelligent commit messages using AI",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {
