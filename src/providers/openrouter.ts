@@ -30,6 +30,11 @@ interface OpenRouterResponse {
 export class OpenRouterProvider extends AIProvider {
   private readonly baseURL = 'https://openrouter.ai/api/v1';
   private readonly recommendedModels = [
+    // Other popular models
+    'moonshotai/kimi-k2',
+    'qwen/qwen-2.5-coder-32b-instruct',
+    'deepseek/deepseek-r1',
+    'microsoft/phi-4',
     // OpenAI Models
     'openai/gpt-4o',
     'openai/gpt-4o-mini',
@@ -57,10 +62,6 @@ export class OpenRouterProvider extends AIProvider {
     // Mistral Models
     'mistralai/mistral-7b-instruct',
     'mistralai/mixtral-8x7b-instruct',
-    // Other popular models
-    'qwen/qwen-2.5-coder-32b-instruct',
-    'deepseek/deepseek-r1',
-    'microsoft/phi-4',
   ];
 
   async validateConfig(): Promise<void> {
