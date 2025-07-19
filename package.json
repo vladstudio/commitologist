@@ -119,7 +119,7 @@
     "watch": "tsc --watch",
     "clean": "rm -rf dist",
     "dev": "bun run watch",
-    "test": "bun test",
+    "test": "vitest",
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
     "format": "biome format --write src",
@@ -130,7 +130,8 @@
     "@biomejs/biome": "^2.1.2",
     "@types/node": "^24.0.14",
     "@types/vscode": "^1.102.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "extensionDependencies": [
     "vscode.git"
