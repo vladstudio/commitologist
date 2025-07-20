@@ -5,6 +5,152 @@ import { PromptManager } from './PromptManager.js';
 import { createProvider } from './providers/index.js';
 import type { AIProviderType, Config } from './types.js';
 
+// UI utility functions
+function handleError(error: unknown, context: string): string {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+  if (error instanceof Error && error.stack) {
+    console.error(`${context}: ${errorMessage}\nStack trace: ${error.stack}`);
+  }
+  return errorMessage;
+}
+
+function showSuccessNotification(title: string): void {
+  vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title,
+      cancellable: false,
+    },
+    async (progress) => {
+      progress.report({ increment: 100 });
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+  );
+}
+
+function insertMessageIntoGit(message: string, outputChannel: vscode.OutputChannel): void {
+  const gitExtension = vscode.extensions.getExtension('vscode.git');
+  if (gitExtension?.isActive) {
+    try {
+      const git = gitExtension.exports.getAPI(1);
+      if (git?.repositories?.length) {
+        const repository = git.repositories[0];
+        if (repository?.inputBox) {
+          repository.inputBox.value = message;
+          outputChannel.appendLine('Commit message inserted into Source Control input');
+        } else {
+          outputChannel.appendLine('Git repository or input box not available');
+        }
+      } else {
+        outputChannel.appendLine('No Git repositories found');
+      }
+    } catch (gitError) {
+      outputChannel.appendLine(`Error accessing Git extension: ${gitError}`);
+    }
+  } else {
+    outputChannel.appendLine('Git extension not active');
+  }
+}
+
+async function selectModel(providerValue: AIProviderType): Promise<string | undefined> {
+  const providerForModelList = createProvider({
+    aiProvider: providerValue,
+    model: 'temp',
+    promptPreset: 'conventional',
+    includeUnstagedFiles: true,
+  });
+
+  const recommendedModels = providerForModelList.getRecommendedModels();
+  const modelOptions = [
+    ...recommendedModels.map((model) => ({ label: model, value: model })),
+    { label: 'Other (Custom)', value: 'OTHER' },
+  ];
+
+  const selectedModelOption = await vscode.window.showQuickPick(modelOptions, {
+    placeHolder: 'Select a model or choose "Other" for custom',
+  });
+
+  if (!selectedModelOption?.value) return undefined;
+
+  if (selectedModelOption.value === 'OTHER') {
+    const customModel = await vscode.window.showInputBox({
+      prompt: 'Enter custom model ID',
+      placeHolder: 'e.g., custom-model-name',
+    });
+    return customModel;
+  }
+
+  return selectedModelOption.value;
+}
+
+async function getApiKey(providerLabel: string): Promise<string | undefined> {
+  return await vscode.window.showInputBox({
+    prompt: `Enter ${providerLabel} API key`,
+    password: true,
+  });
+}
+
+async function getOllamaUrl(): Promise<string | undefined> {
+  return await vscode.window.showInputBox({
+    prompt: 'Enter Ollama server URL',
+    value: 'http://localhost:11434',
+  });
+}
+
+async function selectAIProvider(): Promise<{ label: string; value: string } | undefined> {
+  return await vscode.window.showQuickPick(
+    [
+      { label: 'OpenAI', value: 'openai' },
+      { label: 'Anthropic', value: 'anthropic' },
+      { label: 'Google Gemini', value: 'gemini' },
+      { label: 'OpenRouter', value: 'openrouter' },
+      { label: 'Ollama (Local)', value: 'ollama' },
+    ],
+    {
+      placeHolder: 'Select AI provider',
+    }
+  );
+}
+
+async function handleProviderSpecificConfig(aiProvider: {
+  label: string;
+  value: string;
+}): Promise<{ apiKey?: string; ollamaUrl?: string }> {
+  if (aiProvider.value !== 'ollama') {
+    const apiKey = await getApiKey(aiProvider.label);
+    if (!apiKey) throw new Error('API key required');
+    return { apiKey };
+  }
+
+  if (aiProvider.value === 'ollama') {
+    const ollamaUrl = await getOllamaUrl();
+    if (!ollamaUrl) throw new Error('Ollama URL required');
+    return { ollamaUrl };
+  }
+
+  return {};
+}
+
+async function saveProviderConfig(
+  context: vscode.ExtensionContext,
+  providerValue: string,
+  model: string,
+  apiKey?: string,
+  ollamaUrl?: string
+): Promise<void> {
+  const config = vscode.workspace.getConfiguration('commitologist');
+  await config.update('aiProvider', providerValue, vscode.ConfigurationTarget.Global);
+  await config.update('model', model, vscode.ConfigurationTarget.Global);
+
+  if (apiKey) {
+    await context.secrets.store(`commitologist.${providerValue}.apiKey`, apiKey);
+  }
+
+  if (ollamaUrl) {
+    await config.update('ollamaUrl', ollamaUrl, vscode.ConfigurationTarget.Global);
+  }
+}
+
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel for logging
   const outputChannel = vscode.window.createOutputChannel('Commitologist');
@@ -51,16 +197,12 @@ export function activate(context: vscode.ExtensionContext) {
           title: 'Generating commit message...',
           cancellable: false,
         },
-        async (progress) => {
-          progress.report({ increment: 0 });
-
+        async () => {
           // Get workspace folder
           const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
           if (!workspaceFolder) {
             throw new Error('No workspace folder found');
           }
-
-          progress.report({ increment: 20 });
 
           // Get configuration
           outputChannel.appendLine('Loading configuration...');
@@ -77,8 +219,6 @@ export function activate(context: vscode.ExtensionContext) {
             `Configuration loaded: provider=${config.aiProvider}, model=${config.model}`
           );
 
-          progress.report({ increment: 40 });
-
           // Create AI provider and dependencies
           const aiProvider = createProvider(config);
           const gitAnalyzer = new GitAnalyzer(workspaceFolder.uri.fsPath);
@@ -90,39 +230,18 @@ export function activate(context: vscode.ExtensionContext) {
             config
           );
 
-          progress.report({ increment: 60 });
-
           // Generate commit message
           outputChannel.appendLine('Generating commit message...');
           const message = await messageGenerator.generateCommitMessage();
           outputChannel.appendLine(`Generated message: ${message}`);
 
-          progress.report({ increment: 80 });
-
           // Insert message into Source Control input
-          const gitExtension = vscode.extensions.getExtension('vscode.git');
-          if (gitExtension?.isActive) {
-            const git = gitExtension.exports.getAPI(1);
-            const repository = git.repositories[0];
-            if (repository) {
-              repository.inputBox.value = message;
-              outputChannel.appendLine('Commit message inserted into Source Control input');
-            } else {
-              outputChannel.appendLine('No Git repository found');
-            }
-          } else {
-            outputChannel.appendLine('Git extension not active');
-          }
-
-          progress.report({ increment: 100 });
+          insertMessageIntoGit(message, outputChannel);
         }
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = handleError(error, 'Error generating commit message');
       outputChannel.appendLine(`Error generating commit message: ${errorMessage}`);
-      if (error instanceof Error && error.stack) {
-        outputChannel.appendLine(`Stack trace: ${error.stack}`);
-      }
       vscode.window.showErrorMessage(`Failed to generate commit message: ${errorMessage}`);
     }
   }
@@ -130,100 +249,24 @@ export function activate(context: vscode.ExtensionContext) {
   async function configureProvider() {
     try {
       // AI Provider selection
-      const aiProvider = await vscode.window.showQuickPick(
-        [
-          { label: 'OpenAI', value: 'openai' },
-          { label: 'Anthropic', value: 'anthropic' },
-          { label: 'Google Gemini', value: 'gemini' },
-          { label: 'OpenRouter', value: 'openrouter' },
-          { label: 'Ollama (Local)', value: 'ollama' },
-        ],
-        {
-          placeHolder: 'Select AI provider',
-        }
-      );
+      const aiProvider = await selectAIProvider();
 
-      if (!aiProvider) return;
+      if (!aiProvider?.value) return;
 
       // Model selection - show recommended models + Other option
-      const tempProvider = createProvider({
-        aiProvider: aiProvider.value as AIProviderType,
-        model: 'temp', // Temporary, just to get the provider instance
-        promptPreset: 'conventional',
-        includeUnstagedFiles: true,
-      });
+      const model = await selectModel(aiProvider.value as AIProviderType);
+      if (!model) return;
 
-      const recommendedModels = tempProvider.getRecommendedModels();
-      const modelOptions = [
-        ...recommendedModels.map((model) => ({ label: model, value: model })),
-        { label: 'Other (Custom)', value: 'OTHER' },
-      ];
-
-      const selectedModelOption = await vscode.window.showQuickPick(modelOptions, {
-        placeHolder: 'Select a model or choose "Other" for custom',
-      });
-
-      if (!selectedModelOption) return;
-
-      let model: string;
-      if (selectedModelOption.value === 'OTHER') {
-        const customModel = await vscode.window.showInputBox({
-          prompt: 'Enter custom model ID',
-          placeHolder: 'e.g., custom-model-name',
-        });
-        if (!customModel) return;
-        model = customModel;
-      } else {
-        model = selectedModelOption.value;
-      }
-
-      // API Key (if needed)
-      let apiKey: string | undefined;
-      if (aiProvider.value !== 'ollama') {
-        apiKey = await vscode.window.showInputBox({
-          prompt: `Enter ${aiProvider.label} API key`,
-          password: true,
-        });
-        if (!apiKey) return;
-      }
-
-      // Ollama URL (if needed)
-      let ollamaUrl: string | undefined;
-      if (aiProvider.value === 'ollama') {
-        ollamaUrl = await vscode.window.showInputBox({
-          prompt: 'Enter Ollama server URL',
-          value: 'http://localhost:11434',
-        });
-        if (!ollamaUrl) return;
-      }
+      // Handle provider-specific configuration
+      const { apiKey, ollamaUrl } = await handleProviderSpecificConfig(aiProvider);
 
       // Save configuration
-      const config = vscode.workspace.getConfiguration('commitologist');
-      await config.update('aiProvider', aiProvider.value, vscode.ConfigurationTarget.Global);
-      await config.update('model', model, vscode.ConfigurationTarget.Global);
-
-      if (apiKey) {
-        await context.secrets.store(`commitologist.${aiProvider.value}.apiKey`, apiKey);
-      }
-
-      if (ollamaUrl) {
-        await config.update('ollamaUrl', ollamaUrl, vscode.ConfigurationTarget.Global);
-      }
+      await saveProviderConfig(context, aiProvider.value, model, apiKey, ollamaUrl);
 
       // Show success notification that auto-dismisses after 3 seconds
-      vscode.window.withProgress(
-        {
-          location: vscode.ProgressLocation.Notification,
-          title: '✅ Provider configuration saved successfully!',
-          cancellable: false,
-        },
-        async (progress) => {
-          progress.report({ increment: 100 });
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-        }
-      );
+      showSuccessNotification('✅ Provider configuration saved successfully!');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = handleError(error, 'Error configuring provider');
       vscode.window.showErrorMessage(`Failed to configure provider: ${errorMessage}`);
     }
   }
@@ -281,19 +324,9 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       // Show success notification that auto-dismisses after 3 seconds
-      vscode.window.withProgress(
-        {
-          location: vscode.ProgressLocation.Notification,
-          title: '✅ Preset configuration saved successfully!',
-          cancellable: false,
-        },
-        async (progress) => {
-          progress.report({ increment: 100 });
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-        }
-      );
+      showSuccessNotification('✅ Preset configuration saved successfully!');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = handleError(error, 'Error configuring preset');
       vscode.window.showErrorMessage(`Failed to configure preset: ${errorMessage}`);
     }
   }
