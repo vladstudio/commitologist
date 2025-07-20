@@ -3,7 +3,7 @@ import { GitAnalyzer } from './GitAnalyzer.js';
 import { MessageGenerator } from './MessageGenerator.js';
 import { PromptManager } from './PromptManager.js';
 import { createProvider } from './providers/index.js';
-import { type AIProviderType, type Config } from './types.js';
+import type { AIProviderType, Config } from './types.js';
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel for logging
