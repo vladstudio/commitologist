@@ -4,9 +4,9 @@
 Commitologist is a TypeScript VSCode extension that generates intelligent commit messages using AI providers.
 
 ## Architecture
-- **Core Library** (`src/core/`): Shared business logic
+- **Core Library** (`src/`): Shared business logic and utilities
 - **AI Providers** (`src/providers/`): AI service integrations
-- **VSCode Extension** (`src/extension/`): VSCode integration
+- **VSCode Extension** (`src/extension.ts`): VSCode integration
 
 ## Technology Stack
 - **Runtime**: Bun (package manager and runtime)
@@ -40,16 +40,21 @@ bun run clean
 ## Project Structure
 ```
 src/
-├── core/                    # Shared business logic
-│   ├── AIProvider.ts        # Abstract AI provider base class
-│   ├── ConfigManager.ts     # Configuration persistence
-│   ├── GitAnalyzer.ts       # Git diff analysis
-│   ├── MessageGenerator.ts  # Commit message orchestration
-│   ├── PromptManager.ts     # Prompt template management
-│   ├── types.ts            # Type definitions
-│   └── index.ts            # Core exports
+├── AIProvider.ts            # Abstract AI provider base class
+├── ConfigManager.ts         # Configuration persistence
+├── GitAnalyzer.ts           # Git diff analysis
+├── MessageGenerator.ts      # Commit message orchestration
+├── PromptManager.ts         # Prompt template management
+├── ProviderUtils.ts         # Provider utility functions
+├── types.ts                # Type definitions
+├── extension.ts            # VSCode extension entry point
 ├── providers/              # AI provider implementations
-├── extension/              # VSCode extension
+│   ├── index.ts            # Provider factory
+│   ├── openai.ts           # OpenAI provider
+│   ├── anthropic.ts        # Anthropic provider
+│   ├── gemini.ts           # Google Gemini provider
+│   ├── openrouter.ts       # OpenRouter provider
+│   └── ollama.ts           # Ollama provider
 └── index.ts               # Main entry point
 ```
 
