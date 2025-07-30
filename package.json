@@ -11,14 +11,14 @@
     "url": "https://github.com/vladstudio/commitologist.git"
   },
   "scripts": {
-    "build": "bun run --filter '*' build",
-    "build:core": "bun run --filter @commitologist/core build",
-    "build:vscode": "bun run --filter commitologist build",
-    "build:cli": "bun run --filter @commitologist/cli build",
-    "watch": "bun run --filter '*' watch",
-    "clean": "bun run --filter '*' clean",
+    "build": "bun --filter '*' build",
+    "build:core": "cd packages/core && bun run build",
+    "build:vscode": "cd packages/vscode && bun run build",
+    "build:cli": "cd packages/cli && bun run build",
+    "watch": "bun --filter '*' watch",
+    "clean": "bun --filter '*' clean",
     "dev": "bun run watch",
-    "test": "bun run --filter '*' test",
+    "test": "bun --filter '*' test",
     "lint": "biome check packages/*/src || true",
     "lint:fix": "biome check --fix packages/*/src || true", 
     "format": "biome format --write packages/*/src || true"
