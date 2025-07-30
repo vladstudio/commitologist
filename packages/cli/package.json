@@ -1,0 +1,35 @@
+{
+  "name": "@commitologist/cli",
+  "version": "0.1.9",
+  "description": "CLI utility for generating intelligent commit messages using AI",
+  "bin": {
+    "commitologist": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "bun test"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "cli",
+    "commit-message",
+    "productivity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vladstudio/commitologist.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@commitologist/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

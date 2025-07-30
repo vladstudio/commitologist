@@ -1,0 +1,31 @@
+{
+  "name": "@commitologist/core",
+  "version": "0.1.9",
+  "description": "Core business logic for Commitologist - AI-powered commit message generation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "bun test"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "openai",
+    "anthropic",
+    "gemini",
+    "commit-message"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vladstudio/commitologist.git",
+    "directory": "packages/core"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "name": "commitologist",
+  "displayName": "Commitologist",
+  "description": "Generate intelligent commit messages using AI",
+  "version": "0.1.9",
+  "publisher": "vladstudio",
+  "icon": "../../logo.png",
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "openai",
+    "anthropic",
+    "gemini",
+    "commit-message",
+    "productivity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vladstudio/commitologist.git",
+    "directory": "packages/vscode"
+  },
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "commitologist.generateMessage",
+        "title": "Commitologist: Generate Commit Message",
+        "icon": {
+          "light": "../../icon.svg",
+          "dark": "../../icon-dark.svg"
+        }
+      },
+      {
+        "command": "commitologist.configureProvider",
+        "title": "Commitologist: Configure Provider Settings"
+      },
+      {
+        "command": "commitologist.configurePreset",
+        "title": "Commitologist: Configure Preset Settings"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "commitologist.generateMessage",
+          "when": "scmProvider == git",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "commitologist.generateMessage",
+          "when": "scmProvider == git"
+        },
+        {
+          "command": "commitologist.configureProvider"
+        },
+        {
+          "command": "commitologist.configurePreset"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Commitologist",
+      "properties": {
+        "commitologist.aiProvider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "anthropic",
+            "gemini",
+            "openrouter",
+            "ollama"
+          ],
+          "default": "openai",
+          "description": "AI provider to use for generating commit messages"
+        },
+        "commitologist.model": {
+          "type": "string",
+          "default": "gpt-4o-mini",
+          "description": "AI model to use for generating commit messages"
+        },
+        "commitologist.promptPreset": {
+          "type": "string",
+          "enum": [
+            "conventional",
+            "descriptive",
+            "concise",
+            "custom"
+          ],
+          "default": "conventional",
+          "description": "Prompt preset to use for generating commit messages"
+        },
+        "commitologist.customPrompt": {
+          "type": "string",
+          "description": "Custom prompt template (used when promptPreset is 'custom')"
+        },
+        "commitologist.includeUnstagedFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include unstaged files in commit message generation"
+        },
+        "commitologist.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "URL for Ollama server (when using Ollama provider)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "bun test",
+    "vscode:prepublish": "bun run build",
+    "compile": "tsc -p ./"
+  },
+  "dependencies": {
+    "@commitologist/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.102.0"
+  },
+  "extensionDependencies": [
+    "vscode.git"
+  ]
+}

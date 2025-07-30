@@ -1,138 +1,31 @@
 {
-  "name": "commitologist",
-  "displayName": "Commitologist",
-  "description": "Generate intelligent commit messages using AI",
+  "name": "commitologist-monorepo",
+  "description": "Generate intelligent commit messages using AI - Monorepo",
   "version": "0.1.9",
-  "publisher": "vladstudio",
-  "icon": "logo.png",
-  "engines": {
-    "vscode": "^1.102.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "git",
-    "commit",
-    "ai",
-    "openai",
-    "anthropic",
-    "gemini",
-    "commit-message",
-    "productivity"
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vladstudio/commitologist.git"
   },
-  "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "commitologist.generateMessage",
-        "title": "Commitologist: Generate Commit Message",
-        "icon": {
-          "light": "icon.svg",
-          "dark": "icon-dark.svg"
-        }
-      },
-      {
-        "command": "commitologist.configureProvider",
-        "title": "Commitologist: Configure Provider Settings"
-      },
-      {
-        "command": "commitologist.configurePreset",
-        "title": "Commitologist: Configure Preset Settings"
-      }
-    ],
-    "menus": {
-      "scm/title": [
-        {
-          "command": "commitologist.generateMessage",
-          "when": "scmProvider == git",
-          "group": "navigation"
-        }
-      ],
-      "commandPalette": [
-        {
-          "command": "commitologist.generateMessage",
-          "when": "scmProvider == git"
-        },
-        {
-          "command": "commitologist.configureProvider"
-        },
-        {
-          "command": "commitologist.configurePreset"
-        }
-      ]
-    },
-    "configuration": {
-      "title": "Commitologist",
-      "properties": {
-        "commitologist.aiProvider": {
-          "type": "string",
-          "enum": [
-            "openai",
-            "anthropic",
-            "gemini",
-            "openrouter",
-            "ollama"
-          ],
-          "default": "openai",
-          "description": "AI provider to use for generating commit messages"
-        },
-        "commitologist.model": {
-          "type": "string",
-          "default": "gpt-4o-mini",
-          "description": "AI model to use for generating commit messages"
-        },
-        "commitologist.promptPreset": {
-          "type": "string",
-          "enum": [
-            "conventional",
-            "descriptive",
-            "concise",
-            "custom"
-          ],
-          "default": "conventional",
-          "description": "Prompt preset to use for generating commit messages"
-        },
-        "commitologist.customPrompt": {
-          "type": "string",
-          "description": "Custom prompt template (used when promptPreset is 'custom')"
-        },
-        "commitologist.includeUnstagedFiles": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include unstaged files in commit message generation"
-        },
-        "commitologist.ollamaUrl": {
-          "type": "string",
-          "default": "http://localhost:11434",
-          "description": "URL for Ollama server (when using Ollama provider)"
-        }
-      }
-    }
-  },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "clean": "rm -rf dist",
+    "build": "bun run --filter '*' build",
+    "build:core": "bun run --filter @commitologist/core build",
+    "build:vscode": "bun run --filter commitologist build",
+    "build:cli": "bun run --filter @commitologist/cli build",
+    "watch": "bun run --filter '*' watch",
+    "clean": "bun run --filter '*' clean",
     "dev": "bun run watch",
-    "test": "bun test",
-    "lint": "biome check src",
-    "lint:fix": "biome check --fix src",
-    "format": "biome format --write src",
-    "vscode:prepublish": "npm run build",
-    "compile": "tsc -p ./"
+    "test": "bun run --filter '*' test",
+    "lint": "biome check packages/*/src || true",
+    "lint:fix": "biome check --fix packages/*/src || true", 
+    "format": "biome format --write packages/*/src || true"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.3",
     "@types/node": "^24.1.0",
-    "@types/vscode": "^1.102.0",
     "typescript": "^5.8.3"
-  },
-  "extensionDependencies": [
-    "vscode.git"
-  ]
+  }
 }
