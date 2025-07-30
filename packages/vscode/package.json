@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate intelligent commit messages using AI providers (OpenAI, Anthropic, Gemini, OpenRouter, Ollama)",
-  "version": "0.1.10",
+  "version": "0.1.13",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {
@@ -120,8 +120,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node16",
+    "watch": "bun run build --watch",
     "clean": "rm -rf dist",
     "test": "bun test",
     "vscode:prepublish": "bun run build",
@@ -131,7 +131,8 @@
     "@commitologist/core": "^0.1.9"
   },
   "devDependencies": {
-    "@types/vscode": "^1.102.0"
+    "@types/vscode": "^1.102.0",
+    "esbuild": "^0.25.8"
   },
   "extensionDependencies": [
     "vscode.git"
