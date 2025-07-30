@@ -11,7 +11,7 @@
     "url": "https://github.com/vladstudio/commitologist.git"
   },
   "scripts": {
-    "build": "bun --filter '*' build",
+    "build": "bun run build:core && sleep 1 && bun run build:vscode && bun run build:cli",
     "build:core": "cd packages/core && bun run build",
     "build:vscode": "cd packages/vscode && bun run build",
     "build:cli": "cd packages/cli && bun run build",
