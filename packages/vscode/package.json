@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate intelligent commit messages using AI providers (OpenAI, Anthropic, Gemini, OpenRouter, Ollama)",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {
@@ -16,7 +16,7 @@
     "commit",
     "ai",
     "openai",
-    "anthropic", 
+    "anthropic",
     "gemini",
     "openrouter",
     "ollama",
@@ -128,7 +128,7 @@
     "compile": "tsc -p ./"
   },
   "dependencies": {
-    "@commitologist/core": "workspace:*"
+    "@commitologist/core": "^0.1.9"
   },
   "devDependencies": {
     "@types/vscode": "^1.102.0"
