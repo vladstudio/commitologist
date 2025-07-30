@@ -17,6 +17,8 @@ Command-line utility for intelligent commit message generation using AI provider
 
 ## Installation
 
+### From npm (Recommended)
+
 ```bash
 # Install globally via npm
 npm install -g @commitologist/cli
@@ -26,6 +28,33 @@ bun install -g @commitologist/cli
 
 # Or via yarn
 yarn global add @commitologist/cli
+```
+
+### Local Development Install
+
+If you're working with the source code locally:
+
+```bash
+# Clone the repository
+git clone https://github.com/vladstudio/commitologist.git
+cd commitologist
+
+# Install dependencies
+bun install
+
+# Build the CLI package
+cd packages/cli
+bun run build
+
+# Install globally from local build
+npm install -g .
+```
+
+**Note**: If you encounter a "Cannot find module" error, ensure the package is built before installing:
+```bash
+bun run clean && bun run build
+chmod +x dist/cli.js
+npm install -g .
 ```
 
 ## Quick Start
