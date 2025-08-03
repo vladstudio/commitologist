@@ -11,6 +11,7 @@ Follow the conventional commit format:
 - Keep the first line under 50 characters
 - Use imperative mood ("add" not "added")
 - No period at the end of the first line
+- No single or double quotes
 
 Git diff:
 {diff}
