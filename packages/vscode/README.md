@@ -17,7 +17,7 @@ Commitologist is a VSCode extension that analyzes your staged git changes and ge
 
 ## Installation
 
-Install from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=commitologist):
+Install from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=vladstudio.commitologist):
 
 1. Open VSCode
 2. Go to Extensions (Ctrl+Shift+X / Cmd+Shift+X)
@@ -163,8 +163,8 @@ This extension is built using the [@commitologist/core](https://www.npmjs.com/pa
 
 ## Support
 
-- [GitHub Issues](https://github.com/commitologist/commitologist/issues)
-- [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=commitologist)
+- [GitHub Issues](https://github.com/vladstudio/commitologist/issues)
+- [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=vladstudio.commitologist)
 
 ## License
 

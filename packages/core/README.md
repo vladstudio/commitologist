@@ -25,21 +25,31 @@ bun add @commitologist/core
 ## Quick Start
 
 ```typescript
-import { MessageGenerator, GitAnalyzer, PromptManager } from '@commitologist/core';
+import { 
+  MessageGenerator, 
+  GitAnalyzer, 
+  PromptManager, 
+  createProvider 
+} from '@commitologist/core';
 
 // Initialize components
 const gitAnalyzer = new GitAnalyzer();
 const promptManager = new PromptManager();
 const messageGenerator = new MessageGenerator();
 
+// Create AI provider
+const config = {
+  aiProvider: 'openai',
+  apiKey: 'your-api-key',
+  model: 'gpt-4o-mini',
+  promptPreset: 'conventional'
+};
+const provider = createProvider(config);
+
 // Generate commit message
 const changes = await gitAnalyzer.getStagedChanges();
 const prompt = promptManager.generatePrompt(changes, 'conventional');
-const message = await messageGenerator.generateMessage(prompt, {
-  provider: 'openai',
-  apiKey: 'your-api-key',
-  model: 'gpt-4o-mini'
-});
+const message = await provider.generateCommitMessage(prompt);
 
 console.log(message);
 ```

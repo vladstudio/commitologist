@@ -42,17 +42,20 @@ cd commitologist
 # Install dependencies
 bun install
 
-# Build the CLI package
-cd packages/cli
-bun run build
+# Build core and CLI packages
+bun run build:core && bun run build:cli
 
 # Install globally from local build
-npm install -g .
+cd packages/cli && npm install -g .
 ```
 
-**Note**: If you encounter a "Cannot find module" error, ensure the package is built before installing:
+**Note**: If you encounter a "Cannot find module" error, ensure both core and CLI packages are built:
 ```bash
+# From monorepo root
 bun run clean && bun run build
+
+# Install CLI globally
+cd packages/cli
 chmod +x dist/cli.js
 npm install -g .
 ```
@@ -72,7 +75,7 @@ npm install -g .
    # Create configuration file
    cat > ~/.commitologist/config.json << EOF
    {
-     "provider": "openai",
+     "aiProvider": "openai",
      "apiKey": "your-api-key-here",
      "model": "gpt-4o-mini",
      "promptPreset": "conventional"
@@ -150,13 +153,11 @@ Create `~/.commitologist/config.json`:
 
 ```json
 {
-  "provider": "openai",
+  "aiProvider": "openai",
   "apiKey": "your-api-key",
   "model": "gpt-4o-mini",
   "promptPreset": "conventional",
-  "includeUnstagedChanges": false,
-  "maxChanges": 50,
-  "timeout": 30,
+  "includeUnstagedFiles": false,
   "customPrompt": "Write a commit message for: {changes}"
 }
 ```
@@ -165,21 +166,20 @@ Create `~/.commitologist/config.json`:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `provider` | string | `"openai"` | AI provider (openai/anthropic/gemini/openrouter/ollama) |
+| `aiProvider` | string | `"openai"` | AI provider (openai/anthropic/gemini/openrouter/ollama) |
 | `apiKey` | string | - | API key for the provider |
 | `model` | string | Provider default | Model to use |
 | `promptPreset` | string | `"conventional"` | Preset (conventional/descriptive/concise/custom) |
-| `includeUnstagedChanges` | boolean | `false` | Include unstaged changes |
-| `maxChanges` | number | `50` | Maximum files to analyze |
-| `timeout` | number | `30` | Request timeout in seconds |
+| `includeUnstagedFiles` | boolean | `false` | Include unstaged changes |
 | `customPrompt` | string | - | Custom prompt template (when preset is "custom") |
+| `ollamaUrl` | string | `"http://localhost:11434"` | Ollama server URL (for ollama provider) |
 
 ### Provider-Specific Configuration
 
 **OpenAI:**
 ```json
 {
-  "provider": "openai",
+  "aiProvider": "openai",
   "apiKey": "sk-...",
   "model": "gpt-4o-mini"
 }
@@ -188,7 +188,7 @@ Create `~/.commitologist/config.json`:
 **Anthropic:**
 ```json
 {
-  "provider": "anthropic", 
+  "aiProvider": "anthropic", 
   "apiKey": "sk-ant-...",
   "model": "claude-3-5-sonnet-latest"
 }
@@ -197,7 +197,7 @@ Create `~/.commitologist/config.json`:
 **Google Gemini:**
 ```json
 {
-  "provider": "gemini",
+  "aiProvider": "gemini",
   "apiKey": "AI...",
   "model": "gemini-2.5-flash"
 }
@@ -206,7 +206,7 @@ Create `~/.commitologist/config.json`:
 **OpenRouter:**
 ```json
 {
-  "provider": "openrouter",
+  "aiProvider": "openrouter",
   "apiKey": "sk-or-...",
   "model": "openai/gpt-4o-mini"
 }
@@ -215,8 +215,8 @@ Create `~/.commitologist/config.json`:
 **Ollama:**
 ```json
 {
-  "provider": "ollama",
-  "serverUrl": "http://localhost:11434",
+  "aiProvider": "ollama",
+  "ollamaUrl": "http://localhost:11434",
   "model": "llama3.2"
 }
 ```
@@ -281,7 +281,7 @@ fi
 You can override configuration with environment variables:
 
 ```bash
-export COMMITOLOGIST_PROVIDER=anthropic
+export COMMITOLOGIST_AI_PROVIDER=anthropic
 export COMMITOLOGIST_API_KEY=sk-ant-...
 export COMMITOLOGIST_MODEL=claude-3-5-sonnet-latest
 
@@ -367,23 +367,22 @@ Built using [@commitologist/core](https://www.npmjs.com/package/@commitologist/c
 
 ```bash
 # Clone repository
-git clone https://github.com/commitologist/commitologist.git
+git clone https://github.com/vladstudio/commitologist.git
 cd commitologist
 
 # Install dependencies
 bun install
 
 # Build CLI
-cd packages/cli
-bun run build
+bun run build:core && bun run build:cli
 
 # Test locally
-node dist/cli.js
+cd packages/cli && node dist/cli.js
 ```
 
 ## Related Tools
 
-- [commitologist VSCode Extension](https://marketplace.visualstudio.com/items?itemName=commitologist)
+- [commitologist VSCode Extension](https://marketplace.visualstudio.com/items?itemName=vladstudio.commitologist)
 - [@commitologist/core](https://www.npmjs.com/package/@commitologist/core) - Core library
 
 ## License
