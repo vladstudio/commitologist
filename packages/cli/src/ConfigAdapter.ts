@@ -1,4 +1,4 @@
-import { ConfigManager, type Config } from '@commitologist/core';
+import { type Config, ConfigManager } from '@commitologist/core';
 
 /**
  * ConfigAdapter for CLI - uses filesystem-based configuration

@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
 import type { AIProviderType } from '@commitologist/core';
 import { createProvider } from '@commitologist/core';
+import * as vscode from 'vscode';
 
 /**
  * UI utility functions for VSCode extension

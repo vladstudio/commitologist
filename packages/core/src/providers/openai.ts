@@ -30,10 +30,14 @@ interface OpenAIResponse {
 export class OpenAIProvider extends AIProvider {
   private readonly baseURL = 'https://api.openai.com/v1';
   private readonly recommendedModels = [
-    // GPT-4.1 Series (Latest - April 2025)
+    // GPT-4.1 Series (Latest - 2025)
     'gpt-4.1',
     'gpt-4.1-mini',
     'gpt-4.1-nano',
+    // Reasoning Models
+    'o3',
+    'o3-mini',
+    'o3-pro',
     // GPT-4o Series
     'gpt-4o',
     'gpt-4o-mini',

@@ -29,7 +29,9 @@ interface AnthropicResponse {
 export class AnthropicProvider extends AIProvider {
   private readonly baseURL = 'https://api.anthropic.com/v1';
   private readonly recommendedModels = [
-    // Claude 4 Series (Latest)
+    // Claude 4.1 Series (Latest - August 2025)
+    'claude-opus-4.1-20250805',
+    // Claude 4 Series
     'claude-opus-4-20250514',
     'claude-sonnet-4-20250514',
     // Claude 3.7 Series
@@ -39,6 +41,7 @@ export class AnthropicProvider extends AIProvider {
     'claude-3-5-sonnet-20241022',
     'claude-3-5-sonnet-20240620',
     'claude-3-5-sonnet-latest',
+    'claude-3-5-haiku-20241022',
     // Claude 3 Series
     'claude-3-opus-20240229',
     'claude-3-sonnet-20240229',

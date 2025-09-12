@@ -32,7 +32,9 @@ interface OllamaResponse {
 
 export class OllamaProvider extends AIProvider {
   private readonly recommendedModels = [
-    // Llama 3 Series
+    // Llama 4 & 3.3 Series (Latest)
+    'llama4-scout',
+    'llama4-maverick',
     'llama3.3',
     'llama3.2',
     'llama3.1',
@@ -40,6 +42,21 @@ export class OllamaProvider extends AIProvider {
     'llama3.1:70b',
     'llama3.2:1b',
     'llama3.2:3b',
+    // Gemma 3 Series (Latest)
+    'gemma3:270m',
+    'gemma3:1b',
+    'gemma3:4b',
+    'gemma3:12b',
+    'gemma3:27b',
+    'gemma3n:270m',
+    'gemma3n:1b',
+    'gemma3n:4b',
+    // Qwen 3 Series (Latest)
+    'qwen3:235b',
+    'qwen3:72b',
+    'qwen3:32b',
+    'qwen3:14b',
+    'qwen3:7b',
     // Code-specialized models
     'codellama',
     'codellama:7b-code',
@@ -52,10 +69,13 @@ export class OllamaProvider extends AIProvider {
     // Mistral Series
     'mistral:7b',
     'mistral:7b-instruct',
+    'mistral-small-3.1',
     // Other popular models
     'deepseek-r1',
     'phi-4',
-    'gemma3',
+    'phi-4-mini',
+    'phi-3:mini',
+    'phi-3:medium',
     'qwen2.5',
     'qwen2.5:7b',
     'qwen2.5:14b',

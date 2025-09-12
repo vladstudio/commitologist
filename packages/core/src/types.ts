@@ -41,11 +41,11 @@ export interface PromptContext {
 }
 
 export const DEFAULT_MODELS: Record<AIProviderType, string> = {
-  openai: 'gpt-4o-mini',
-  anthropic: 'claude-3-5-sonnet-latest',
+  openai: 'gpt-4.1-mini',
+  anthropic: 'claude-sonnet-4-20250514',
   gemini: 'gemini-2.5-flash',
-  openrouter: 'openai/gpt-4o-mini',
-  ollama: 'llama3.2',
+  openrouter: 'openai/gpt-4.1-mini',
+  ollama: 'llama3.3',
 };
 
 export const PROMPT_PRESETS = {

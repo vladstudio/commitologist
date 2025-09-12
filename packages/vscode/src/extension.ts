@@ -1,19 +1,19 @@
-import * as vscode from 'vscode';
 import {
+  type AIProviderType,
+  createProvider,
   GitAnalyzer,
   MessageGenerator,
   PromptManager,
-  createProvider,
-  type AIProviderType,
 } from '@commitologist/core';
+import * as vscode from 'vscode';
 import { ConfigAdapter } from './ConfigAdapter.js';
 import {
   handleError,
-  showSuccessNotification,
-  insertMessageIntoGit,
-  selectModel,
-  selectAIProvider,
   handleProviderSpecificConfig,
+  insertMessageIntoGit,
+  selectAIProvider,
+  selectModel,
+  showSuccessNotification,
 } from './UIHelpers.js';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -179,11 +179,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (includeUnstaged === undefined) return;
 
       // Save configuration
-      await configAdapter.savePresetConfig(
-        promptPreset.value,
-        includeUnstaged.value,
-        customPrompt
-      );
+      await configAdapter.savePresetConfig(promptPreset.value, includeUnstaged.value, customPrompt);
 
       // Show success notification that auto-dismisses after 3 seconds
       showSuccessNotification('✅ Preset configuration saved successfully!');
@@ -192,7 +188,6 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showErrorMessage(`Failed to configure preset: ${errorMessage}`);
     }
   }
-
 }
 
 export function deactivate() {}

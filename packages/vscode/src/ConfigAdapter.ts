@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
 import type { AIProviderType, Config } from '@commitologist/core';
+import * as vscode from 'vscode';
 
 /**
  * ConfigAdapter bridges VSCode settings with the core ConfigManager interface

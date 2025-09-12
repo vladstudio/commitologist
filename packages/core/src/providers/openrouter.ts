@@ -30,29 +30,40 @@ interface OpenRouterResponse {
 export class OpenRouterProvider extends AIProvider {
   private readonly baseURL = 'https://openrouter.ai/api/v1';
   private readonly recommendedModels = [
-    // Other popular models
+    // Latest Popular Models (2025)
     'moonshotai/kimi-k2',
-    'qwen/qwen-2.5-coder-32b-instruct',
+    'qwen/qwen-3-235b-a22b',
     'deepseek/deepseek-r1',
     'microsoft/phi-4',
+    'mistralai/mistral-small-3.1',
     // OpenAI Models
+    'openai/gpt-4.1',
+    'openai/gpt-4.1-mini',
+    'openai/o3',
+    'openai/o3-mini',
     'openai/gpt-4o',
     'openai/gpt-4o-mini',
     'openai/gpt-4-turbo',
     'openai/gpt-3.5-turbo',
     'openai/chatgpt-4o-latest',
     // Anthropic Models
+    'anthropic/claude-opus-4.1-20250805',
+    'anthropic/claude-sonnet-4-20250514',
     'anthropic/claude-3.5-sonnet',
     'anthropic/claude-3.5-haiku',
     'anthropic/claude-3-opus',
     'anthropic/claude-3-sonnet',
     'anthropic/claude-3-haiku',
     // Meta Models
+    'meta-llama/llama-4-maverick-400b',
+    'meta-llama/llama-3.3-70b-instruct',
     'meta-llama/llama-3.1-8b-instruct',
     'meta-llama/llama-3.1-70b-instruct',
     'meta-llama/llama-3.2-3b-instruct',
     'meta-llama/llama-3.2-1b-instruct',
     // Google Models
+    'google/gemini-2.5-pro',
+    'google/gemini-2.5-flash',
     'google/gemini-pro-1.5',
     'google/gemini-flash-1.5',
     // Amazon Models
