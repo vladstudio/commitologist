@@ -121,9 +121,13 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (!aiProvider?.value) return;
 
-      // Model selection - show recommended models + Other option
-      const model = await selectModel(aiProvider.value as AIProviderType);
-      if (!model) return;
+      // Model selection - skip for CLI providers
+      let model = '';
+      if (aiProvider.value !== 'claude-cli' && aiProvider.value !== 'codex-cli') {
+        const selectedModel = await selectModel(aiProvider.value as AIProviderType);
+        if (!selectedModel) return;
+        model = selectedModel;
+      }
 
       // Handle provider-specific configuration
       const { apiKey, ollamaUrl } = await handleProviderSpecificConfig(aiProvider);

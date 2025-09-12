@@ -12,6 +12,9 @@ interface GeminiRequest {
     temperature?: number;
     maxOutputTokens?: number;
   };
+  systemInstruction?: {
+    parts: Array<{ text: string }>;
+  };
 }
 
 interface GeminiResponse {
@@ -35,17 +38,17 @@ interface GeminiResponse {
 export class GeminiProvider extends AIProvider {
   private readonly baseURL = 'https://generativelanguage.googleapis.com/v1beta';
   private readonly recommendedModels = [
-    // Gemini 2.5 Series (Latest)
-    'gemini-2.5-pro',
-    'gemini-2.5-flash',
+    // Gemini 2.5 Series (Most stable first)
     'gemini-2.5-flash-lite',
+    'gemini-2.5-flash', // Known issue with 500 errors
+    'gemini-2.5-pro', // Known issue with 500 errors
+    // Gemini 1.5 Series (Reliable alternatives)
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
+    'gemini-1.5-flash-8b',
     // Gemini 2.0 Series
     'gemini-2.0-flash',
     'gemini-2.0-flash-lite',
-    // Gemini 1.5 Series
-    'gemini-1.5-pro',
-    'gemini-1.5-flash',
-    'gemini-1.5-flash-8b',
     // Gemini 1.0 Series
     'gemini-1.0-pro',
   ];
@@ -85,6 +88,17 @@ export class GeminiProvider extends AIProvider {
         if (response.status === 401 || response.status === 403) {
           throw new Error('Invalid Google Gemini API key');
         }
+
+        // Special handling for 500 errors with 2.5 models
+        if (
+          response.status === 500 &&
+          (this.config.model.includes('2.5-pro') || this.config.model.includes('2.5-flash'))
+        ) {
+          throw new Error(
+            `Gemini API error: ${response.status} ${response.statusText}. This is a known issue with Gemini 2.5 models. Try using gemini-2.5-flash-lite, gemini-1.5-flash, or gemini-1.5-pro instead.`
+          );
+        }
+
         throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
@@ -101,17 +115,19 @@ export class GeminiProvider extends AIProvider {
     }
 
     const systemPrompt = getSystemPrompt();
-    const fullPrompt = `${systemPrompt}\n\n${prompt}`;
 
     const request: GeminiRequest = {
       contents: [
         {
-          parts: [{ text: fullPrompt }],
+          parts: [{ text: prompt }],
         },
       ],
+      systemInstruction: {
+        parts: [{ text: systemPrompt }],
+      },
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2000,
+        maxOutputTokens: 500, // Reduced for commit messages
       },
     };
 
@@ -129,6 +145,18 @@ export class GeminiProvider extends AIProvider {
 
       if (!response.ok) {
         const errorMessage = await parseJsonErrorResponse(response);
+
+        // Special handling for 500 errors with 2.5 models
+        if (
+          response.status === 500 &&
+          (this.config.model.includes('2.5-pro') || this.config.model.includes('2.5-flash'))
+        ) {
+          throw createProviderError(
+            response.status,
+            `${errorMessage}. This is a known issue with Gemini 2.5 models. Try using gemini-2.5-flash-lite, gemini-1.5-flash, or gemini-1.5-pro instead.`
+          );
+        }
+
         throw createProviderError(response.status, errorMessage);
       }
 

@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import type { AIProviderType } from '@commitologist/core';
 import { createProvider } from '@commitologist/core';
 import * as vscode from 'vscode';
@@ -5,6 +6,15 @@ import * as vscode from 'vscode';
 /**
  * UI utility functions for VSCode extension
  */
+
+function isCliAvailable(command: string): boolean {
+  try {
+    execSync(`which ${command}`, { stdio: 'pipe' });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export function handleError(error: unknown, context: string): string {
   const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -98,28 +108,36 @@ export async function getOllamaUrl(): Promise<string | undefined> {
 }
 
 export async function selectAIProvider(): Promise<{ label: string; value: string } | undefined> {
-  return await vscode.window.showQuickPick(
-    [
-      { label: 'OpenAI', value: 'openai' },
-      { label: 'Anthropic', value: 'anthropic' },
-      { label: 'Google Gemini', value: 'gemini' },
-      { label: 'OpenRouter', value: 'openrouter' },
-      { label: 'Ollama (Local)', value: 'ollama' },
-    ],
-    {
-      placeHolder: 'Select AI provider',
-    }
-  );
+  const providers = [
+    { label: 'OpenAI', value: 'openai' },
+    { label: 'Anthropic', value: 'anthropic' },
+    { label: 'Google Gemini', value: 'gemini' },
+    { label: 'OpenRouter', value: 'openrouter' },
+    { label: 'Ollama (Local)', value: 'ollama' },
+  ];
+
+  // Check for Claude Code CLI availability
+  if (isCliAvailable('claude')) {
+    providers.push({ label: 'Claude Code (CLI)', value: 'claude-cli' });
+  }
+
+  // Check for Codex CLI availability
+  if (isCliAvailable('codex')) {
+    providers.push({ label: 'Codex (CLI)', value: 'codex-cli' });
+  }
+
+  return await vscode.window.showQuickPick(providers, {
+    placeHolder: 'Select AI provider',
+  });
 }
 
 export async function handleProviderSpecificConfig(aiProvider: {
   label: string;
   value: string;
 }): Promise<{ apiKey?: string; ollamaUrl?: string }> {
-  if (aiProvider.value !== 'ollama') {
-    const apiKey = await getApiKey(aiProvider.label);
-    if (!apiKey) throw new Error('API key required');
-    return { apiKey };
+  // CLI providers don't need any configuration
+  if (aiProvider.value === 'claude-cli' || aiProvider.value === 'codex-cli') {
+    return {};
   }
 
   if (aiProvider.value === 'ollama') {
@@ -128,5 +146,8 @@ export async function handleProviderSpecificConfig(aiProvider: {
     return { ollamaUrl };
   }
 
-  return {};
+  // All other providers need API keys
+  const apiKey = await getApiKey(aiProvider.label);
+  if (!apiKey) throw new Error('API key required');
+  return { apiKey };
 }

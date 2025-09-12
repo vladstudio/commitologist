@@ -22,12 +22,15 @@ export class ConfigAdapter {
     const includeUnstagedFiles = config.get<boolean>('includeUnstagedFiles');
     const ollamaUrl = config.get<string>('ollamaUrl');
 
-    if (!aiProvider || !model || !promptPreset) {
+    // CLI providers don't need model selection
+    const modelRequired = aiProvider !== 'claude-cli' && aiProvider !== 'codex-cli';
+    if (!aiProvider || (modelRequired && !model) || !promptPreset) {
       return null;
     }
 
     let apiKey: string | undefined;
-    if (aiProvider !== 'ollama') {
+    // CLI providers and Ollama don't need API keys
+    if (aiProvider !== 'ollama' && aiProvider !== 'claude-cli' && aiProvider !== 'codex-cli') {
       apiKey = await this.context.secrets.get(`commitologist.${aiProvider}.apiKey`);
       if (!apiKey) {
         return null;

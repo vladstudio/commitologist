@@ -42,12 +42,22 @@ CONFIGURATION:
     "apiKey": "your-api-key-here"
   }
 
+  Example CLI provider configuration:
+  {
+    "aiProvider": "claude-cli",
+    "model": "",
+    "promptPreset": "conventional",
+    "includeUnstagedFiles": true
+  }
+
   Supported AI providers:
   - openai (requires apiKey)
   - anthropic (requires apiKey)
   - gemini (requires apiKey)
   - openrouter (requires apiKey)
   - ollama (requires ollamaUrl, defaults to http://localhost:11434)
+  - claude-cli (requires Claude Code CLI installation)
+  - codex-cli (requires Codex CLI installation)
 
   Supported prompt presets:
   - conventional: Conventional Commits format

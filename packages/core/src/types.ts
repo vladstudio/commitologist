@@ -1,4 +1,11 @@
-export type AIProviderType = 'openai' | 'anthropic' | 'gemini' | 'openrouter' | 'ollama';
+export type AIProviderType =
+  | 'openai'
+  | 'anthropic'
+  | 'gemini'
+  | 'openrouter'
+  | 'ollama'
+  | 'claude-cli'
+  | 'codex-cli';
 
 export interface Config {
   aiProvider: AIProviderType;
@@ -43,9 +50,11 @@ export interface PromptContext {
 export const DEFAULT_MODELS: Record<AIProviderType, string> = {
   openai: 'gpt-4.1-mini',
   anthropic: 'claude-sonnet-4-20250514',
-  gemini: 'gemini-2.5-flash',
+  gemini: 'gemini-2.5-flash-lite',
   openrouter: 'openai/gpt-4.1-mini',
   ollama: 'llama3.3',
+  'claude-cli': '',
+  'codex-cli': '',
 };
 
 export const PROMPT_PRESETS = {
