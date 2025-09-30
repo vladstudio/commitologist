@@ -1,7 +1,7 @@
 {
   "name": "commitologist",
   "displayName": "Commitologist",
-  "description": "Generate intelligent commit messages using AI providers (OpenAI, Anthropic, Gemini, OpenRouter, Ollama)",
+  "description": "Generate intelligent commit messages using AI providers (OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Claude Code)",
   "version": "0.1.14",
   "publisher": "vladstudio",
   "icon": "logo.png",
@@ -20,6 +20,7 @@
     "gemini",
     "openrouter",
     "ollama",
+    "claude",
     "commit-message",
     "productivity",
     "automation",
@@ -86,7 +87,9 @@
             "anthropic",
             "gemini",
             "openrouter",
-            "ollama"
+            "ollama",
+            "claude-cli",
+            "codex-cli"
           ],
           "default": "openai",
           "description": "AI provider to use for generating commit messages"

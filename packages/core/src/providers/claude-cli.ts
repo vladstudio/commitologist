@@ -14,15 +14,24 @@ export class ClaudeCliProvider extends AIProvider {
 
   async generateCommitMessage(prompt: string): Promise<AIProviderResponse> {
     try {
-      // Use claude command to generate commit message
-      const result = execSync(`claude "${prompt}"`, {
+      // Escape single quotes for shell safety
+      const escapedPrompt = prompt.replace(/'/g, "'\\''");
+
+      // Use claude command in headless mode with -p flag
+      const result = execSync(`claude -p '${escapedPrompt}'`, {
         encoding: 'utf8',
-        stdio: 'pipe',
-        timeout: 30000, // 30 second timeout
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout: 60000, // 60 second timeout
       });
 
+      const message = result.trim();
+
+      if (!message) {
+        throw new Error('Claude CLI returned empty response');
+      }
+
       return {
-        message: result.trim(),
+        message,
       };
     } catch (error: unknown) {
       if (error instanceof Error) {
