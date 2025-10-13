@@ -37,20 +37,25 @@ interface GeminiResponse {
 
 export class GeminiProvider extends AIProvider {
   private readonly baseURL = 'https://generativelanguage.googleapis.com/v1beta';
+  // Model list reference: https://ai.google.dev/gemini-api/docs/models
   private readonly recommendedModels = [
-    // Gemini 2.5 Series (Most stable first)
+    // Gemini 2.5 Series (Latest - September 2025, most stable first)
     'gemini-2.5-flash-lite',
-    'gemini-2.5-flash', // Known issue with 500 errors
-    'gemini-2.5-pro', // Known issue with 500 errors
-    // Gemini 1.5 Series (Reliable alternatives)
-    'gemini-1.5-flash',
-    'gemini-1.5-pro',
-    'gemini-1.5-flash-8b',
+    'gemini-2.5-flash-lite-preview-09-2025',
+    'gemini-2.5-flash',
+    'gemini-2.5-flash-preview-09-2025',
+    'gemini-2.5-pro',
+    'gemini-2.5-flash-image',
+    'gemini-2.5-flash-native-audio-preview-09-2025',
+    'gemini-2.5-flash-preview-tts',
+    'gemini-2.5-pro-preview-tts',
     // Gemini 2.0 Series
     'gemini-2.0-flash',
+    'gemini-2.0-flash-001',
     'gemini-2.0-flash-lite',
-    // Gemini 1.0 Series
-    'gemini-1.0-pro',
+    'gemini-2.0-flash-lite-001',
+    'gemini-2.0-flash-preview-image-generation',
+    'gemini-2.0-flash-live-001',
   ];
 
   async validateConfig(): Promise<void> {

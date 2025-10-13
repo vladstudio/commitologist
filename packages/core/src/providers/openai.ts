@@ -29,22 +29,28 @@ interface OpenAIResponse {
 
 export class OpenAIProvider extends AIProvider {
   private readonly baseURL = 'https://api.openai.com/v1';
+  // Model list reference: https://platform.openai.com/docs/models
   private readonly recommendedModels = [
-    // GPT-4.1 Series (Latest - 2025)
-    'gpt-4.1',
-    'gpt-4.1-mini',
-    'gpt-4.1-nano',
-    // Reasoning Models
+    // Reasoning Models (Latest - April 2025)
+    'o4-mini-2025-04-16',
+    'o4-mini',
+    'o3-2025-04-16',
     'o3',
     'o3-mini',
-    'o3-pro',
+    'o1',
+    'o1-mini',
     // GPT-4o Series
     'gpt-4o',
+    'gpt-4o-2024-11-20',
+    'gpt-4o-2024-08-06',
+    'gpt-4o-2024-05-13',
     'gpt-4o-mini',
+    'gpt-4o-mini-2024-07-18',
     'chatgpt-4o-latest',
     // GPT-4 Turbo Series
     'gpt-4-turbo',
     'gpt-4-turbo-2024-04-09',
+    'gpt-4-turbo-preview',
     // GPT-3.5 Series
     'gpt-3.5-turbo',
     'gpt-3.5-turbo-0125',
