@@ -32,53 +32,35 @@ interface OllamaResponse {
 
 export class OllamaProvider extends AIProvider {
   private readonly recommendedModels = [
-    // Llama 4 & 3.3 Series (Latest)
-    'llama4-scout',
-    'llama4-maverick',
-    'llama3.3',
-    'llama3.2',
-    'llama3.1',
-    'llama3.1:8b',
-    'llama3.1:70b',
-    'llama3.2:1b',
-    'llama3.2:3b',
-    // Gemma 3 Series (Latest)
-    'gemma3:270m',
-    'gemma3:1b',
-    'gemma3:4b',
-    'gemma3:12b',
-    'gemma3:27b',
-    'gemma3n:270m',
-    'gemma3n:1b',
-    'gemma3n:4b',
-    // Qwen 3 Series (Latest)
+    // Latest Models (November 2025)
+    'gpt-oss:120b',
+    'gpt-oss:20b',
     'qwen3:235b',
     'qwen3:72b',
     'qwen3:32b',
-    'qwen3:14b',
-    'qwen3:7b',
-    // Code-specialized models
-    'codellama',
-    'codellama:7b-code',
-    'codellama:7b-instruct',
-    'codellama:34b',
-    'qwen2.5-coder',
-    'qwen2.5-coder:1.5b',
-    'qwen2.5-coder:7b',
-    'qwen2.5-coder:32b',
-    // Mistral Series
-    'mistral:7b',
-    'mistral:7b-instruct',
-    'mistral-small-3.1',
-    // Other popular models
     'deepseek-r1',
-    'phi-4',
-    'phi-4-mini',
-    'phi-3:mini',
-    'phi-3:medium',
-    'qwen2.5',
-    'qwen2.5:7b',
-    'qwen2.5:14b',
+    'deepseek-v3.1',
+    // Llama 4 & 3.3 Series
+    'llama3.3:70b',
+    'llama3.3:70b-instruct-q4_K_M',
+    'llama3.3:8b',
+    // Gemma 3 Series
+    'gemma3:27b',
+    'gemma3:12b',
+    'gemma3:4b',
+    'gemma3:1b',
+    'gemma3n:4b',
+    'gemma3n:1b',
+    // Reasoning Models
+    'qwq:32b',
+    // Code-specialized models
+    'qwen2.5-coder:32b',
+    'qwen2.5-coder:7b',
+    'deepseek-coder-v2:16b',
+    'codellama:34b',
+    // General purpose
+    'mistral-small:22b',
+    'phi-4:14b',
     'qwen2.5:32b',
   ];
 
