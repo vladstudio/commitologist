@@ -28,21 +28,21 @@ interface AnthropicResponse {
 
 export class AnthropicProvider extends AIProvider {
   private readonly baseURL = 'https://api.anthropic.com/v1';
+  // Model list reference: https://docs.anthropic.com/en/docs/about-claude/models/overview
   private readonly recommendedModels = [
-    // Claude 4 Series (Latest)
-    'claude-opus-4-20250514',
+    // Claude 4.5 Series (Latest - November 2025)
+    'claude-opus-4-5-20251101',
+    'claude-opus-4-5',
+    'claude-sonnet-4-5-20250929',
+    'claude-sonnet-4-5',
+    'claude-haiku-4-5-20251015',
+    'claude-haiku-4-5',
+    // Claude 4.1 Series (August 2025)
+    'claude-opus-4-1-20250805',
+    'claude-opus-4-1',
+    // Claude 4 Series (May 2025)
     'claude-sonnet-4-20250514',
-    // Claude 3.7 Series
-    'claude-3-7-sonnet-20250219',
-    'claude-3-7-sonnet-latest',
-    // Claude 3.5 Series
-    'claude-3-5-sonnet-20241022',
-    'claude-3-5-sonnet-20240620',
-    'claude-3-5-sonnet-latest',
-    // Claude 3 Series
-    'claude-3-opus-20240229',
-    'claude-3-sonnet-20240229',
-    'claude-3-haiku-20240307',
+    'claude-opus-4-20250514',
   ];
 
   async validateConfig(): Promise<void> {
@@ -54,12 +54,14 @@ export class AnthropicProvider extends AIProvider {
       throw new Error('Anthropic model is required');
     }
 
+    const apiKey = this.config.apiKey;
+
     // Test API key by making a simple request
     try {
       const response = await fetch(`${this.baseURL}/messages`, {
         method: 'POST',
         headers: {
-          'x-api-key': this.config.apiKey,
+          'x-api-key': apiKey,
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
         },
@@ -89,6 +91,7 @@ export class AnthropicProvider extends AIProvider {
       throw this.handleError(new Error('Anthropic API key is required'));
     }
 
+    const apiKey = this.config.apiKey;
     const request: AnthropicRequest = {
       model: this.config.model,
       max_tokens: 150,
@@ -106,7 +109,7 @@ export class AnthropicProvider extends AIProvider {
       const response = await fetch(`${this.baseURL}/messages`, {
         method: 'POST',
         headers: {
-          'x-api-key': this.config.apiKey,
+          'x-api-key': apiKey,
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
         },

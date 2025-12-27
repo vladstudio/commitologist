@@ -28,24 +28,21 @@ interface AnthropicResponse {
 
 export class AnthropicProvider extends AIProvider {
   private readonly baseURL = 'https://api.anthropic.com/v1';
-  // Model list reference: https://docs.claude.com/en/docs/about-claude/models/overview
+  // Model list reference: https://docs.anthropic.com/en/docs/about-claude/models/overview
   private readonly recommendedModels = [
-    // Claude Haiku 4.5 Series (Latest - October 2025)
-    'claude-haiku-4-5-20251001',
-    'claude-haiku-4-5',
-    // Claude Sonnet 4.5 Series (September 2025)
+    // Claude 4.5 Series (Latest - November 2025)
+    'claude-opus-4-5-20251101',
+    'claude-opus-4-5',
     'claude-sonnet-4-5-20250929',
     'claude-sonnet-4-5',
-    // Claude Opus 4.1 Series (August 2025)
+    'claude-haiku-4-5-20251015',
+    'claude-haiku-4-5',
+    // Claude 4.1 Series (August 2025)
     'claude-opus-4-1-20250805',
     'claude-opus-4-1',
-    // Claude Opus 4 Series (May 2025)
-    'claude-opus-4-20250514',
+    // Claude 4 Series (May 2025)
     'claude-sonnet-4-20250514',
-    // Claude 3.7 Series (deprecated, kept for compatibility)
-    'claude-3-7-sonnet-20250219',
-    // Claude 3.5 Series (deprecated)
-    'claude-3-5-sonnet-20241022',
+    'claude-opus-4-20250514',
   ];
 
   async validateConfig(): Promise<void> {

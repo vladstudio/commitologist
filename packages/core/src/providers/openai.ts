@@ -31,27 +31,24 @@ export class OpenAIProvider extends AIProvider {
   private readonly baseURL = 'https://api.openai.com/v1';
   // Model list reference: https://platform.openai.com/docs/models
   private readonly recommendedModels = [
-    // GPT-5 Series (Latest - November 2025)
+    // GPT-5 Series (Latest - December 2025)
+    'gpt-5.2',
+    'gpt-5.1',
     'gpt-5',
     'gpt-5-mini',
     'gpt-5-nano',
     // Reasoning Models (o3/o4 Series)
     'o3',
     'o3-mini',
-    'o4-mini-2025-04-16',
     'o4-mini',
-    // GPT-4.1 Series (October 2025)
+    // GPT-4.1 Series (April 2025)
     'gpt-4.1',
     'gpt-4.1-mini',
     'gpt-4.1-nano',
-    // GPT-4o Series
+    // GPT-4o Series (legacy)
     'gpt-4o',
-    'gpt-4o-2024-11-20',
     'gpt-4o-mini',
-    'gpt-4o-mini-2024-07-18',
     'chatgpt-4o-latest',
-    // Deprecated models (kept for compatibility)
-    'gpt-3.5-turbo',
   ];
 
   async validateConfig(): Promise<void> {

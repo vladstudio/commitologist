@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate intelligent commit messages using AI providers (OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Claude Code)",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {

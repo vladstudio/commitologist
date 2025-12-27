@@ -29,44 +29,38 @@ interface OpenRouterResponse {
 
 export class OpenRouterProvider extends AIProvider {
   private readonly baseURL = 'https://openrouter.ai/api/v1';
-  // Model list reference: https://openrouter.ai/docs/models
+  // Model list reference: https://openrouter.ai/models
   private readonly recommendedModels = [
-    // Latest Models (November 2025)
-    'google/gemini-3-pro-preview',
+    // Latest Models (December 2025)
+    'openai/gpt-5.2',
+    'openai/gpt-5.1',
     'openai/gpt-5',
-    'openai/gpt-5-mini',
-    'openai/gpt-5-nano',
-    'anthropic/claude-haiku-4-5-20251001',
-    'anthropic/claude-sonnet-4-5-20250929',
+    'anthropic/claude-opus-4-5',
+    'anthropic/claude-sonnet-4-5',
+    'anthropic/claude-haiku-4-5',
+    'google/gemini-3-flash',
+    'google/gemini-3-pro',
+    // Top Open-Source Models
+    'deepseek/deepseek-r1',
     'deepseek/deepseek-v3',
     'qwen/qwen3:235b',
-    // Advanced Models (2025)
-    'deepseek/deepseek-r1',
-    'moonshotai/kimi-k2',
-    'microsoft/phi-4',
     'qwen/qwen2.5-coder:32b',
-    'qwen/qwen2.5:72b',
+    'moonshotai/kimi-k2',
+    // Meta Models
+    'meta-llama/llama-4-maverick',
+    'meta-llama/llama-3.3-70b-instruct',
     // OpenAI Models
+    'openai/o3',
+    'openai/o4-mini',
     'openai/gpt-4.1',
     'openai/gpt-4.1-mini',
     'openai/gpt-4o',
-    'openai/gpt-4o-mini',
-    'openai/gpt-3.5-turbo',
-    // Anthropic Models (latest)
-    'anthropic/claude-opus-4-1-20250805',
-    'anthropic/claude-opus-4-20250514',
-    'anthropic/claude-3-5-sonnet-20241022',
-    // Meta Models
-    'meta-llama/llama-4-maverick-400b',
-    'meta-llama/llama-3.3-70b-instruct',
-    'meta-llama/llama-3.1-70b-instruct',
     // Google Models
     'google/gemini-2.5-pro',
     'google/gemini-2.5-flash',
-    'google/gemini-2.5-flash-lite',
     // Mistral Models
     'mistralai/mistral-small-3.1',
-    'mistralai/mixtral-8x7b-instruct',
+    'mistralai/mistral-large',
   ];
 
   async validateConfig(): Promise<void> {

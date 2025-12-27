@@ -29,39 +29,38 @@ interface OpenRouterResponse {
 
 export class OpenRouterProvider extends AIProvider {
   private readonly baseURL = 'https://openrouter.ai/api/v1';
+  // Model list reference: https://openrouter.ai/models
   private readonly recommendedModels = [
-    // Other popular models
-    'moonshotai/kimi-k2',
-    'qwen/qwen-2.5-coder-32b-instruct',
+    // Latest Models (December 2025)
+    'openai/gpt-5.2',
+    'openai/gpt-5.1',
+    'openai/gpt-5',
+    'anthropic/claude-opus-4-5',
+    'anthropic/claude-sonnet-4-5',
+    'anthropic/claude-haiku-4-5',
+    'google/gemini-3-flash',
+    'google/gemini-3-pro',
+    // Top Open-Source Models
     'deepseek/deepseek-r1',
-    'microsoft/phi-4',
-    // OpenAI Models
-    'openai/gpt-4o',
-    'openai/gpt-4o-mini',
-    'openai/gpt-4-turbo',
-    'openai/gpt-3.5-turbo',
-    'openai/chatgpt-4o-latest',
-    // Anthropic Models
-    'anthropic/claude-3.5-sonnet',
-    'anthropic/claude-3.5-haiku',
-    'anthropic/claude-3-opus',
-    'anthropic/claude-3-sonnet',
-    'anthropic/claude-3-haiku',
+    'deepseek/deepseek-v3',
+    'qwen/qwen3:235b',
+    'qwen/qwen2.5-coder:32b',
+    'moonshotai/kimi-k2',
     // Meta Models
-    'meta-llama/llama-3.1-8b-instruct',
-    'meta-llama/llama-3.1-70b-instruct',
-    'meta-llama/llama-3.2-3b-instruct',
-    'meta-llama/llama-3.2-1b-instruct',
+    'meta-llama/llama-4-maverick',
+    'meta-llama/llama-3.3-70b-instruct',
+    // OpenAI Models
+    'openai/o3',
+    'openai/o4-mini',
+    'openai/gpt-4.1',
+    'openai/gpt-4.1-mini',
+    'openai/gpt-4o',
     // Google Models
-    'google/gemini-pro-1.5',
-    'google/gemini-flash-1.5',
-    // Amazon Models
-    'amazon/nova-lite-v1',
-    'amazon/nova-micro-v1',
-    'amazon/nova-pro-v1',
+    'google/gemini-2.5-pro',
+    'google/gemini-2.5-flash',
     // Mistral Models
-    'mistralai/mistral-7b-instruct',
-    'mistralai/mixtral-8x7b-instruct',
+    'mistralai/mistral-small-3.1',
+    'mistralai/mistral-large',
   ];
 
   async validateConfig(): Promise<void> {
