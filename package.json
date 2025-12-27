@@ -1,7 +1,7 @@
 {
   "name": "commitologist-monorepo",
   "description": "Generate intelligent commit messages using AI - Monorepo",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -20,7 +20,7 @@
     "dev": "bun run watch",
     "test": "bun --filter '*' test",
     "lint": "biome check packages/*/src || true",
-    "lint:fix": "biome check --fix packages/*/src || true", 
+    "lint:fix": "biome check --fix packages/*/src || true",
     "format": "biome format --write packages/*/src || true"
   },
   "devDependencies": {

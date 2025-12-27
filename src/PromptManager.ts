@@ -8,9 +8,13 @@ You are a git commit message generator. Analyze the provided git diff and genera
 Follow the conventional commit format:
 - type(scope): description
 - Types: feat, fix, docs, style, refactor, test, chore
-- Keep the first line under 50 characters
+- Keep the first line under 70 characters
 - Use imperative mood ("add" not "added")
 - No period at the end of the first line
+
+If the diff contains multiple distinct features or changes:
+- Use the most significant change for the first line
+- List additional changes in the body, each prefixed with its type (e.g., "feat:", "fix:")
 
 Git diff:
 {diff}
@@ -22,12 +26,17 @@ Generate only the commit message, no additional text or explanations.
 You are a git commit message generator. Analyze the provided git diff and generate a detailed, descriptive commit message.
 
 Requirements:
-- First line: Brief summary (under 50 characters)
+- First line: Brief summary (under 70 characters)
 - Second line: Empty
 - Following lines: Detailed description of changes
 - Use imperative mood
 - Explain what was changed and why
 - Be specific about the impact
+
+If the diff contains multiple distinct features or changes:
+- Summarize the overall theme in the first line
+- Use bullet points to describe each separate change in the body
+- Group related changes together
 
 Git diff:
 {diff}
@@ -40,10 +49,14 @@ You are a git commit message generator. Analyze the provided git diff and genera
 
 Requirements:
 - Single line only
-- Under 50 characters
+- Under 70 characters
 - Use imperative mood
 - Be specific but brief
 - No conventional commit format required
+
+If the diff contains multiple distinct features or changes:
+- Combine with semicolons (e.g., "add auth; fix validation")
+- Prioritize the most important changes if space is limited
 
 Git diff:
 {diff}

@@ -13,6 +13,10 @@ Follow the conventional commit format:
 - No period at the end of the first line
 - No single or double quotes
 
+If the diff contains multiple distinct features or changes:
+- Use the most significant change for the first line
+- List additional changes in the body, each prefixed with its type (e.g., "feat:", "fix:")
+
 Git diff:
 {diff}
 
@@ -30,6 +34,11 @@ Requirements:
 - Explain what was changed and why
 - Be specific about the impact
 
+If the diff contains multiple distinct features or changes:
+- Summarize the overall theme in the first line
+- Use bullet points to describe each separate change in the body
+- Group related changes together
+
 Git diff:
 {diff}
 
@@ -45,6 +54,10 @@ Requirements:
 - Use imperative mood
 - Be specific but brief
 - No conventional commit format required
+
+If the diff contains multiple distinct features or changes:
+- Combine them with "and" or semicolons (e.g., "add auth; fix validation")
+- Prioritize the most important changes if space is limited
 
 Git diff:
 {diff}
