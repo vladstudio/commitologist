@@ -54,12 +54,14 @@ export class AnthropicProvider extends AIProvider {
       throw new Error('Anthropic model is required');
     }
 
+    const apiKey = this.config.apiKey;
+
     // Test API key by making a simple request
     try {
       const response = await fetch(`${this.baseURL}/messages`, {
         method: 'POST',
         headers: {
-          'x-api-key': this.config.apiKey,
+          'x-api-key': apiKey,
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
         },
@@ -89,6 +91,7 @@ export class AnthropicProvider extends AIProvider {
       throw this.handleError(new Error('Anthropic API key is required'));
     }
 
+    const apiKey = this.config.apiKey;
     const request: AnthropicRequest = {
       model: this.config.model,
       max_tokens: 150,
@@ -106,7 +109,7 @@ export class AnthropicProvider extends AIProvider {
       const response = await fetch(`${this.baseURL}/messages`, {
         method: 'POST',
         headers: {
-          'x-api-key': this.config.apiKey,
+          'x-api-key': apiKey,
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
         },
