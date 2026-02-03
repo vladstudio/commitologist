@@ -31,36 +31,15 @@ export class OpenRouterProvider extends AIProvider {
   private readonly baseURL = 'https://openrouter.ai/api/v1';
   // Model list reference: https://openrouter.ai/models
   private readonly recommendedModels = [
-    // Latest Models (December 2025)
-    'openai/gpt-5.2',
-    'openai/gpt-5.1',
-    'openai/gpt-5',
-    'anthropic/claude-opus-4-5',
-    'anthropic/claude-sonnet-4-5',
+    // Fast, low-cost models for short commit messages
+    'openai/gpt-5-mini',
+    'openai/gpt-5-nano',
+    'openai/gpt-4.1-mini',
     'anthropic/claude-haiku-4-5',
     'google/gemini-3-flash',
-    'google/gemini-3-pro',
-    // Top Open-Source Models
-    'deepseek/deepseek-r1',
-    'deepseek/deepseek-v3',
-    'qwen/qwen3:235b',
-    'qwen/qwen2.5-coder:32b',
-    'moonshotai/kimi-k2',
-    // Meta Models
-    'meta-llama/llama-4-maverick',
-    'meta-llama/llama-3.3-70b-instruct',
-    // OpenAI Models
-    'openai/o3',
-    'openai/o4-mini',
-    'openai/gpt-4.1',
-    'openai/gpt-4.1-mini',
-    'openai/gpt-4o',
-    // Google Models
-    'google/gemini-2.5-pro',
-    'google/gemini-2.5-flash',
-    // Mistral Models
+    'google/gemini-2.5-flash-lite',
+    'deepseek/deepseek-v3.2',
     'mistralai/mistral-small-3.1',
-    'mistralai/mistral-large',
   ];
 
   async validateConfig(): Promise<void> {

@@ -41,7 +41,7 @@ const messageGenerator = new MessageGenerator();
 const config = {
   aiProvider: 'openai',
   apiKey: 'your-api-key',
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   promptPreset: 'conventional'
 };
 const provider = createProvider(config);
@@ -61,7 +61,7 @@ console.log(message);
 import { OpenAIProvider } from '@commitologist/core';
 
 const provider = new OpenAIProvider();
-await provider.validateConfig({ apiKey: 'sk-...', model: 'gpt-4o-mini' });
+await provider.validateConfig({ apiKey: 'sk-...', model: 'gpt-5-mini' });
 const message = await provider.generateCommitMessage(prompt);
 ```
 
@@ -70,7 +70,7 @@ const message = await provider.generateCommitMessage(prompt);
 import { AnthropicProvider } from '@commitologist/core';
 
 const provider = new AnthropicProvider();
-await provider.validateConfig({ apiKey: 'sk-ant-...', model: 'claude-3-5-sonnet-latest' });
+await provider.validateConfig({ apiKey: 'sk-ant-...', model: 'claude-haiku-4-5' });
 ```
 
 ### Gemini
@@ -78,7 +78,7 @@ await provider.validateConfig({ apiKey: 'sk-ant-...', model: 'claude-3-5-sonnet-
 import { GeminiProvider } from '@commitologist/core';
 
 const provider = new GeminiProvider();
-await provider.validateConfig({ apiKey: 'AI...', model: 'gemini-2.5-flash' });
+await provider.validateConfig({ apiKey: 'AI...', model: 'gemini-3-flash' });
 ```
 
 ### OpenRouter
@@ -88,7 +88,7 @@ import { OpenRouterProvider } from '@commitologist/core';
 const provider = new OpenRouterProvider();
 await provider.validateConfig({ 
   apiKey: 'sk-or-...', 
-  model: 'openai/gpt-4o-mini' 
+  model: 'openai/gpt-5-mini' 
 });
 ```
 
@@ -99,7 +99,7 @@ import { OllamaProvider } from '@commitologist/core';
 const provider = new OllamaProvider();
 await provider.validateConfig({ 
   serverUrl: 'http://localhost:11434',
-  model: 'llama3.2'
+  model: 'llama3.3'
 });
 ```
 

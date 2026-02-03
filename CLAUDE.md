@@ -130,11 +130,11 @@ packages/
 ### Shared Configuration Options
 - **Supported Providers**: OpenAI, Anthropic, Gemini, OpenRouter, Ollama
 - **Default Models**: 
-  - OpenAI: `gpt-4o-mini`
-  - Anthropic: `claude-3-5-sonnet-latest`
-  - Gemini: `gemini-2.5-flash`
-  - OpenRouter: `openai/gpt-4o-mini` (includes moonshotai/kimi-k2)
-  - Ollama: `llama3.2` (configurable server URL)
+  - OpenAI: `gpt-5-mini`
+  - Anthropic: `claude-haiku-4-5`
+  - Gemini: `gemini-3-flash`
+  - OpenRouter: `openai/gpt-5-mini`
+  - Ollama: `llama3.3` (configurable server URL)
 - **Prompt Presets**: conventional, descriptive, concise, custom
 - **Features**: Unstaged file inclusion toggle, custom prompt support
 

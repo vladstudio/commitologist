@@ -36,16 +36,10 @@ export class GeminiProvider extends AIProvider {
   private readonly baseURL = 'https://generativelanguage.googleapis.com/v1beta';
   // Model list reference: https://ai.google.dev/gemini-api/docs/models
   private readonly recommendedModels = [
-    // Gemini 3 Series (Latest - December 2025)
+    // Fast, cost-effective models for short commit messages
     'gemini-3-flash',
-    'gemini-3-pro',
-    'gemini-3-deep-think',
-    // Gemini 2.5 Series (stable)
-    'gemini-2.5-pro',
     'gemini-2.5-flash',
     'gemini-2.5-flash-lite',
-    // Gemini 2.0 Series (legacy)
-    'gemini-2.0-flash',
   ];
 
   async validateConfig(): Promise<void> {

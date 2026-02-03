@@ -74,12 +74,12 @@ npm install -g .
    
    # Create configuration file
    cat > ~/.commitologist/config.json << EOF
-   {
-     "aiProvider": "openai",
-     "apiKey": "your-api-key-here",
-     "model": "gpt-4o-mini",
-     "promptPreset": "conventional"
-   }
+    {
+      "aiProvider": "openai",
+      "apiKey": "your-api-key-here",
+      "model": "gpt-5-mini",
+      "promptPreset": "conventional"
+    }
    EOF
    ```
 
@@ -155,7 +155,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "openai",
   "apiKey": "your-api-key",
-  "model": "gpt-4o-mini",
+  "model": "gpt-5-mini",
   "promptPreset": "conventional",
   "includeUnstagedFiles": false,
   "customPrompt": "Write a commit message for: {changes}"
@@ -181,7 +181,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "openai",
   "apiKey": "sk-...",
-  "model": "gpt-4o-mini"
+  "model": "gpt-5-mini"
 }
 ```
 
@@ -190,7 +190,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "anthropic", 
   "apiKey": "sk-ant-...",
-  "model": "claude-3-5-sonnet-latest"
+  "model": "claude-haiku-4-5"
 }
 ```
 
@@ -199,7 +199,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "gemini",
   "apiKey": "AI...",
-  "model": "gemini-2.5-flash"
+  "model": "gemini-3-flash"
 }
 ```
 
@@ -208,7 +208,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "openrouter",
   "apiKey": "sk-or-...",
-  "model": "openai/gpt-4o-mini"
+  "model": "openai/gpt-5-mini"
 }
 ```
 
@@ -217,7 +217,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "ollama",
   "ollamaUrl": "http://localhost:11434",
-  "model": "llama3.2"
+  "model": "llama3.3"
 }
 ```
 
@@ -283,7 +283,7 @@ You can override configuration with environment variables:
 ```bash
 export COMMITOLOGIST_AI_PROVIDER=anthropic
 export COMMITOLOGIST_API_KEY=sk-ant-...
-export COMMITOLOGIST_MODEL=claude-3-5-sonnet-latest
+export COMMITOLOGIST_MODEL=claude-haiku-4-5
 
 commitologist
 ```

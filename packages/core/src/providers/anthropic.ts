@@ -30,19 +30,9 @@ export class AnthropicProvider extends AIProvider {
   private readonly baseURL = 'https://api.anthropic.com/v1';
   // Model list reference: https://docs.anthropic.com/en/docs/about-claude/models/overview
   private readonly recommendedModels = [
-    // Claude 4.5 Series (Latest - November 2025)
-    'claude-opus-4-5-20251101',
-    'claude-opus-4-5',
-    'claude-sonnet-4-5-20250929',
-    'claude-sonnet-4-5',
-    'claude-haiku-4-5-20251015',
+    // Fast, cost-effective models for short commit messages
     'claude-haiku-4-5',
-    // Claude 4.1 Series (August 2025)
-    'claude-opus-4-1-20250805',
-    'claude-opus-4-1',
-    // Claude 4 Series (May 2025)
-    'claude-sonnet-4-20250514',
-    'claude-opus-4-20250514',
+    'claude-sonnet-4-5',
   ];
 
   async validateConfig(): Promise<void> {

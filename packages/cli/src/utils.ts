@@ -36,7 +36,7 @@ CONFIGURATION:
   Example configuration:
   {
     "aiProvider": "openai",
-    "model": "gpt-4o-mini", 
+    "model": "gpt-5-mini", 
     "promptPreset": "conventional",
     "includeUnstagedFiles": true,
     "apiKey": "your-api-key-here"

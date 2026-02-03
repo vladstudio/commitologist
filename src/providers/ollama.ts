@@ -32,30 +32,12 @@ interface OllamaResponse {
 
 export class OllamaProvider extends AIProvider {
   private readonly recommendedModels = [
-    // Latest Models (December 2025)
-    'qwen3:235b',
-    'qwen3:72b',
-    'qwen3:32b',
-    'qwen3:8b',
-    'deepseek-r1',
-    'deepseek-v3',
-    // Llama 3.3 Series
-    'llama3.3:70b',
+    // Fast, practical local models for short commit messages
     'llama3.3',
-    // Gemma 3 Series
-    'gemma3:27b',
-    'gemma3:12b',
     'gemma3:4b',
-    // Code-specialized models
-    'qwen2.5-coder:32b',
-    'qwen2.5-coder:7b',
-    'qwen2.5-coder',
-    // Reasoning Models
-    'qwq:32b',
-    // General purpose
-    'mistral-small:22b',
     'phi-4:14b',
-    'qwen2.5:32b',
+    'qwen3:8b',
+    'qwen2.5-coder:7b',
   ];
 
   private get baseURL(): string {

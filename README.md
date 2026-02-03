@@ -12,11 +12,11 @@ AI-powered commit messages for VSCode and command line.
 
 ## Supported AI Providers
 
-**OpenAI**: GPT-4o, GPT-4 Turbo, GPT-3.5  
-**Anthropic**: Claude 3.5 Sonnet, Claude 3 Haiku  
-**Google**: Gemini 2.5/2.0/1.5 models  
-**OpenRouter**: 400+ models (OpenAI, Anthropic, Meta, Amazon)  
-**Ollama**: Local models (Llama 3, Codellama, Mistral, etc.)
+**OpenAI**: GPT-5 mini, GPT-4.1 mini  
+**Anthropic**: Claude Haiku 4.5, Claude Sonnet 4.5  
+**Google**: Gemini 3 Flash, Gemini 2.5 Flash(-Lite)  
+**OpenRouter**: Fast/cheap curated models (OpenAI, Anthropic, Google, DeepSeek, Mistral)  
+**Ollama**: Local fast models (Llama 3, Gemma 3, Qwen)
 
 ## Installation
 
@@ -58,7 +58,7 @@ Create `~/.commitologist/config.json`:
 {
   "aiProvider": "openai",
   "apiKey": "your-api-key-here",
-  "model": "gpt-4o-mini",
+  "model": "gpt-5-mini",
   "promptPreset": "conventional",
   "includeUnstagedFiles": true
 }
@@ -68,7 +68,7 @@ For Ollama:
 ```json
 {
   "aiProvider": "ollama",
-  "model": "llama3.2",
+  "model": "llama3.3",
   "promptPreset": "conventional",
   "ollamaUrl": "http://localhost:11434"
 }

@@ -47,27 +47,27 @@ Install from the [VSCode Marketplace](https://marketplace.visualstudio.com/items
 
 **OpenAI**
 - Requires API key from [OpenAI Platform](https://platform.openai.com/)
-- Default model: `gpt-4o-mini`
+- Default model: `gpt-5-mini`
 - Supports all GPT models
 
 **Anthropic**  
 - Requires API key from [Anthropic Console](https://console.anthropic.com/)
-- Default model: `claude-3-5-sonnet-latest`
-- Supports Claude 3 family models
+- Default model: `claude-haiku-4-5`
+- Supports Claude 4 family models
 
 **Google Gemini**
 - Requires API key from [Google AI Studio](https://aistudio.google.com/)
-- Default model: `gemini-2.5-flash`
-- Supports Gemini Pro and Flash models
+- Default model: `gemini-3-flash`
+- Supports Gemini Flash models
 
 **OpenRouter**
 - Requires API key from [OpenRouter](https://openrouter.ai/)
-- Default model: `openai/gpt-4o-mini`
+- Default model: `openai/gpt-5-mini`
 - Access to 200+ models including Claude, GPT, and others
 
 **Ollama**
 - Requires local Ollama installation
-- Default model: `llama3.2`
+- Default model: `llama3.3`
 - Default server: `http://localhost:11434`
 - Supports all locally installed models
 

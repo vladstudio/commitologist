@@ -96,7 +96,7 @@
         },
         "commitologist.model": {
           "type": "string",
-          "default": "gpt-4o-mini",
+          "default": "gpt-5-mini",
           "description": "AI model to use for generating commit messages"
         },
         "commitologist.promptPreset": {
