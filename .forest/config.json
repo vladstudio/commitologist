@@ -1,9 +1,8 @@
 {
   "version": 1,
   "setup": "bun install --frozen-lockfile",
-  "baseBranch": "origin/main",
+  "baseBranch": "main",
   "linear": {
-    "enabled": true,
-    "team": "VLA"
+    "teams": ["VLA"]
   }
 }
