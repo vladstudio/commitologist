@@ -12,3 +12,4 @@ coverage/
 **/*.d.ts
 src/extension/*.vsix
 .vscode
+.forest/local.json
