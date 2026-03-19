@@ -1,8 +1,7 @@
 #!/bin/bash
+# Bump the version in packages/vscode/package.json manually
 set -e
-
 bun run build
-
-cd packages/vscode && vsce publish patch --no-dependencies
-cd packages/core && npm publish --access public && cd ../..
-cd packages/cli && npm publish --access public && cd ../..
+cd packages/vscode && vsce publish
+cd ../core && npm publish --access public
+cd ../cli && npm publish --access public
