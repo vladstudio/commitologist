@@ -33,11 +33,12 @@ interface OllamaResponse {
 export class OllamaProvider extends AIProvider {
   private readonly recommendedModels = [
     // Fast, practical local models for short commit messages
-    'llama3.3',
+    'llama4:scout',
+    'qwen3.5:4b',
     'gemma3:4b',
     'phi-4:14b',
     'qwen3:8b',
-    'qwen2.5-coder:7b',
+    'devstral',
   ];
 
   private get baseURL(): string {

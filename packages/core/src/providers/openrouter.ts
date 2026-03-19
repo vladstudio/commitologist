@@ -32,14 +32,13 @@ export class OpenRouterProvider extends AIProvider {
   // Model list reference: https://openrouter.ai/models
   private readonly recommendedModels = [
     // Fast, low-cost models for short commit messages
-    'openai/gpt-5-mini',
-    'openai/gpt-5-nano',
-    'openai/gpt-4.1-mini',
+    'openai/gpt-5.4-nano',
+    'openai/gpt-5.4-mini',
     'anthropic/claude-haiku-4-5',
-    'google/gemini-3-flash',
     'google/gemini-2.5-flash-lite',
     'deepseek/deepseek-v3.2',
-    'mistralai/mistral-small-3.1',
+    'mistralai/mistral-small-2603',
+    'meta-llama/llama-4-scout',
   ];
 
   async validateConfig(): Promise<void> {

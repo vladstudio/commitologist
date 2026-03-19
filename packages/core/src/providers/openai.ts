@@ -32,10 +32,10 @@ export class OpenAIProvider extends AIProvider {
   // Model list reference: https://platform.openai.com/docs/models
   private readonly recommendedModels = [
     // Fast, low-cost models for short commit messages
-    'gpt-5-mini',
-    'gpt-5-nano',
-    'gpt-4.1-mini',
+    'gpt-5.4-nano',
+    'gpt-5.4-mini',
     'gpt-4.1-nano',
+    'gpt-4.1-mini',
   ];
 
   async validateConfig(): Promise<void> {

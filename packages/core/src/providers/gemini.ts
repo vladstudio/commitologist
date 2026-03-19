@@ -40,9 +40,9 @@ export class GeminiProvider extends AIProvider {
   // Model list reference: https://ai.google.dev/gemini-api/docs/models
   private readonly recommendedModels = [
     // Fast, cost-effective models for short commit messages
-    'gemini-3-flash',
-    'gemini-2.5-flash',
     'gemini-2.5-flash-lite',
+    'gemini-2.5-flash',
+    'gemini-3-flash-preview',
   ];
 
   async validateConfig(): Promise<void> {
@@ -87,7 +87,7 @@ export class GeminiProvider extends AIProvider {
           (this.config.model.includes('2.5-pro') || this.config.model.includes('2.5-flash'))
         ) {
           throw new Error(
-            `Gemini API error: ${response.status} ${response.statusText}. This is a known issue with Gemini 2.5 models. Try using gemini-3-flash or gemini-2.5-flash-lite instead.`
+            `Gemini API error: ${response.status} ${response.statusText}. This is a known issue with Gemini 2.5 models. Try using gemini-2.5-flash-lite instead.`
           );
         }
 
@@ -145,7 +145,7 @@ export class GeminiProvider extends AIProvider {
         ) {
           throw createProviderError(
             response.status,
-            `${errorMessage}. This is a known issue with Gemini 2.5 models. Try using gemini-3-flash or gemini-2.5-flash-lite instead.`
+            `${errorMessage}. This is a known issue with Gemini 2.5 models. Try using gemini-2.5-flash-lite instead.`
           );
         }
 

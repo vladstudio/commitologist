@@ -48,11 +48,11 @@ export interface PromptContext {
 }
 
 export const DEFAULT_MODELS: Record<AIProviderType, string> = {
-  openai: 'gpt-5-mini',
+  openai: 'gpt-5.4-nano',
   anthropic: 'claude-haiku-4-5',
-  gemini: 'gemini-3-flash',
-  openrouter: 'openai/gpt-5-mini',
-  ollama: 'llama3.3',
+  gemini: 'gemini-2.5-flash-lite',
+  openrouter: 'openai/gpt-5.4-nano',
+  ollama: 'llama4:scout',
   'claude-cli': '',
   'codex-cli': '',
 };

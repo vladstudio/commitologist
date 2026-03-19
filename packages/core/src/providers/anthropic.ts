@@ -32,6 +32,7 @@ export class AnthropicProvider extends AIProvider {
   private readonly recommendedModels = [
     // Fast, cost-effective models for short commit messages
     'claude-haiku-4-5',
+    'claude-sonnet-4-6',
     'claude-sonnet-4-5',
   ];
 
