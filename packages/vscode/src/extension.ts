@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 const execAsync = promisify(exec);
 const TETRA_URL = 'http://localhost:24100';
 const COMMAND_NAME = 'Commit message';
-const MAX_DIFF_BYTES = 100 * 1024;
+const MAX_DIFF_BYTES = 200 * 1024;
 
 let log: vscode.OutputChannel;
 
@@ -44,7 +44,7 @@ async function generateMessage() {
         if (!res.ok) {
           const body = await res.text();
           let error = `Tetra returned ${res.status}`;
-          try { error = JSON.parse(body)?.error ?? error; } catch {}
+          try { error = JSON.parse(body)?.error ?? error; } catch { }
           throw new Error(error);
         }
 
@@ -99,4 +99,4 @@ async function getDiff(cwd: string): Promise<string> {
   return diff;
 }
 
-export function deactivate() {}
+export function deactivate() { }
