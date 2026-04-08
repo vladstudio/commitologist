@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 const execAsync = promisify(exec);
 const TETRA_URL = 'http://localhost:24100';
 const COMMAND_NAME = 'Commit message';
-const MAX_DIFF_BYTES = 300 * 1024;
+const MAX_DIFF_BYTES = 100 * 1024;
 
 let log: vscode.OutputChannel;
 
