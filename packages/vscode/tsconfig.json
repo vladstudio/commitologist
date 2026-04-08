@@ -16,7 +16,5 @@
     "**/*.test.ts",
     "**/*.spec.ts"
   ],
-  "references": [
-    { "path": "../core" }
-  ]
+  "references": []
 }

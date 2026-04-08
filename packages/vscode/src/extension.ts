@@ -1,195 +1,74 @@
-import {
-  type AIProviderType,
-  createProvider,
-  GitAnalyzer,
-  MessageGenerator,
-  PromptManager,
-} from '@commitologist/core';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import * as vscode from 'vscode';
-import { ConfigAdapter } from './ConfigAdapter.js';
-import {
-  handleError,
-  handleProviderSpecificConfig,
-  insertMessageIntoGit,
-  selectAIProvider,
-  selectModel,
-  showSuccessNotification,
-} from './UIHelpers.js';
+
+const execAsync = promisify(exec);
+const TETRA_URL = 'http://localhost:24100';
+const COMMAND_NAME = 'Commit message';
+
+let log: vscode.OutputChannel;
 
 export function activate(context: vscode.ExtensionContext) {
-  // Create output channel for logging
-  const outputChannel = vscode.window.createOutputChannel('Commitologist');
-  outputChannel.appendLine('Commitologist extension is activating...');
-
-  // Create configuration adapter
-  const configAdapter = new ConfigAdapter(context);
-
-  // Register commands
-  const generateCommand = vscode.commands.registerCommand(
-    'commitologist.generateMessage',
-    async () => {
-      await generateCommitMessage();
-    }
-  );
-
-  const configureProviderCommand = vscode.commands.registerCommand(
-    'commitologist.configureProvider',
-    async () => {
-      await configureProvider();
-    }
-  );
-
-  const configurePresetCommand = vscode.commands.registerCommand(
-    'commitologist.configurePreset',
-    async () => {
-      await configurePreset();
-    }
-  );
-
+  log = vscode.window.createOutputChannel('Commitologist');
   context.subscriptions.push(
-    generateCommand,
-    configureProviderCommand,
-    configurePresetCommand,
-    outputChannel
+    log,
+    vscode.commands.registerCommand('commitologist.generateMessage', () => generateMessage())
   );
+}
 
-  outputChannel.appendLine('Commitologist extension activated successfully!');
+async function generateMessage() {
+  const cwd = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (!cwd) return vscode.window.showErrorMessage('Commitologist: No workspace folder found');
 
-  async function generateCommitMessage() {
-    outputChannel.appendLine('Starting commit message generation...');
-    try {
-      // Show progress indicator
-      await vscode.window.withProgress(
-        {
-          location: vscode.ProgressLocation.Notification,
-          title: 'Generating commit message...',
-          cancellable: false,
-        },
-        async () => {
-          // Get workspace folder
-          const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-          if (!workspaceFolder) {
-            throw new Error('No workspace folder found');
-          }
+  try {
+    const message = await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: 'Generating commit message...',
+        cancellable: false,
+      },
+      async () => {
+        const [staged, unstaged] = await Promise.all([
+          execAsync('git diff --cached', { cwd }).then((r) => r.stdout),
+          execAsync('git diff', { cwd }).then((r) => r.stdout),
+        ]);
+        const diff = [staged, unstaged].filter(Boolean).join('\n');
+        if (!diff) throw new Error('No changes found');
 
-          // Get configuration
-          outputChannel.appendLine('Loading configuration...');
-          const config = await configAdapter.loadConfig();
-          if (!config) {
-            // If not configured, show provider config first
-            outputChannel.appendLine('Configuration not found, prompting user to configure');
-            vscode.window.showErrorMessage(
-              'Please configure Commitologist first using "Commitologist: Configure Provider Settings"'
-            );
-            return;
-          }
-          outputChannel.appendLine(
-            `Configuration loaded: provider=${config.aiProvider}, model=${config.model}`
-          );
-
-          // Create AI provider and dependencies
-          const aiProvider = createProvider(config);
-          const gitAnalyzer = new GitAnalyzer(workspaceFolder.uri.fsPath);
-          const promptManager = new PromptManager();
-          const messageGenerator = new MessageGenerator(
-            aiProvider,
-            gitAnalyzer,
-            promptManager,
-            config
-          );
-
-          // Generate commit message
-          outputChannel.appendLine('Generating commit message...');
-          const message = await messageGenerator.generateCommitMessage();
-          outputChannel.appendLine(`Generated message: ${message}`);
-
-          // Insert message into Source Control input
-          insertMessageIntoGit(message, outputChannel);
-        }
-      );
-    } catch (error) {
-      const errorMessage = handleError(error, 'Error generating commit message');
-      outputChannel.appendLine(`Error generating commit message: ${errorMessage}`);
-      vscode.window.showErrorMessage(`Failed to generate commit message: ${errorMessage}`);
-    }
-  }
-
-  async function configureProvider() {
-    try {
-      // AI Provider selection
-      const aiProvider = await selectAIProvider();
-
-      if (!aiProvider?.value) return;
-
-      // Model selection - skip for CLI providers
-      let model = '';
-      if (aiProvider.value !== 'claude-cli' && aiProvider.value !== 'codex-cli') {
-        const selectedModel = await selectModel(aiProvider.value as AIProviderType);
-        if (!selectedModel) return;
-        model = selectedModel;
-      }
-
-      // Handle provider-specific configuration
-      const { apiKey, ollamaUrl } = await handleProviderSpecificConfig(aiProvider);
-
-      // Save configuration
-      await configAdapter.saveProviderConfig(aiProvider.value, model, apiKey, ollamaUrl);
-
-      // Show success notification that auto-dismisses after 3 seconds
-      showSuccessNotification('✅ Provider configuration saved successfully!');
-    } catch (error) {
-      const errorMessage = handleError(error, 'Error configuring provider');
-      vscode.window.showErrorMessage(`Failed to configure provider: ${errorMessage}`);
-    }
-  }
-
-  async function configurePreset() {
-    try {
-      // Prompt preset selection
-      const promptPreset = await vscode.window.showQuickPick(
-        [
-          { label: 'Conventional Commits', value: 'conventional' },
-          { label: 'Descriptive', value: 'descriptive' },
-          { label: 'Concise', value: 'concise' },
-          { label: 'Custom', value: 'custom' },
-        ],
-        {
-          placeHolder: 'Select prompt preset',
-        }
-      );
-
-      if (!promptPreset) return;
-
-      let customPrompt: string | undefined;
-      if (promptPreset.value === 'custom') {
-        customPrompt = await vscode.window.showInputBox({
-          prompt: 'Enter custom prompt template',
-          placeHolder: 'Write a commit message for the following changes...',
+        const res = await fetch(`${TETRA_URL}/transform`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: COMMAND_NAME, text: diff }),
         });
-        if (!customPrompt) return;
-      }
 
-      // Include unstaged files option
-      const includeUnstaged = await vscode.window.showQuickPick(
-        [
-          { label: 'Yes', value: true },
-          { label: 'No', value: false },
-        ],
-        {
-          placeHolder: 'Include unstaged files in analysis?',
+        if (!res.ok) {
+          const body = await res.text();
+          let error = `Tetra returned ${res.status}`;
+          try { error = JSON.parse(body)?.error ?? error; } catch {}
+          throw new Error(error);
         }
+
+        return ((await res.json()) as { result: string }).result;
+      }
+    );
+
+    const git = vscode.extensions.getExtension('vscode.git')?.exports?.getAPI(1);
+    const repo = git?.repositories?.find(
+      (r: { rootUri: vscode.Uri }) => r.rootUri.fsPath === cwd
+    );
+    if (!repo?.inputBox) throw new Error('Git source control input not available');
+    repo.inputBox.value = message;
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    log.appendLine(`Error: ${msg}`);
+    if (msg.includes('fetch failed') || msg.includes('ECONNREFUSED')) {
+      const action = await vscode.window.showErrorMessage(
+        'Commitologist: Cannot connect to Tetra. Is it running?',
+        'Get Tetra'
       );
-
-      if (includeUnstaged === undefined) return;
-
-      // Save configuration
-      await configAdapter.savePresetConfig(promptPreset.value, includeUnstaged.value, customPrompt);
-
-      // Show success notification that auto-dismisses after 3 seconds
-      showSuccessNotification('✅ Preset configuration saved successfully!');
-    } catch (error) {
-      const errorMessage = handleError(error, 'Error configuring preset');
-      vscode.window.showErrorMessage(`Failed to configure preset: ${errorMessage}`);
+      if (action === 'Get Tetra') vscode.env.openExternal(vscode.Uri.parse('https://apps.vlad.studio/tetra'));
+    } else {
+      vscode.window.showErrorMessage(`Commitologist: ${msg}`);
     }
   }
 }

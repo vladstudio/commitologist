@@ -1,27 +1,22 @@
 {
   "name": "commitologist-monorepo",
-  "description": "Generate intelligent commit messages using AI - Monorepo",
-  "version": "0.1.10",
+  "description": "Generate commit messages using Tetra",
+  "version": "0.2.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/vscode"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vladstudio/commitologist.git"
   },
   "scripts": {
-    "build": "bun run build:core && sleep 1 && bun run build:vscode && bun run build:cli",
-    "build:core": "cd packages/core && bun run build",
-    "build:vscode": "cd packages/vscode && bun run build",
-    "build:cli": "cd packages/cli && bun run build",
-    "watch": "bun --filter '*' watch",
-    "clean": "bun --filter '*' clean",
-    "dev": "bun run watch",
-    "test": "bun --filter '*' test",
-    "lint": "biome check packages/*/src || true",
-    "lint:fix": "biome check --fix packages/*/src || true",
-    "format": "biome format --write packages/*/src || true"
+    "build": "cd packages/vscode && bun run build",
+    "watch": "cd packages/vscode && bun run watch",
+    "clean": "cd packages/vscode && bun run clean",
+    "lint": "biome check packages/vscode/src || true",
+    "lint:fix": "biome check --fix packages/vscode/src || true",
+    "format": "biome format --write packages/vscode/src || true"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.3",
