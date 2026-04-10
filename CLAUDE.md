@@ -5,7 +5,7 @@ VSCode extension that generates commit messages via Tetra's local HTTP API.
 ## How it works
 
 1. Gets git diff (staged + unstaged) from the workspace
-2. POSTs to `http://localhost:24100/transform` with command "Commit message"
+2. POSTs to `http://localhost:24100/transform` with command "AI Generate commit message"
 3. Inserts the result into the Source Control input box
 
 ## Structure

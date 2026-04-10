@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 
 const execAsync = promisify(exec);
 const TETRA_URL = 'http://localhost:24100';
-const COMMAND_NAME = 'Commit message';
+const COMMAND_NAME = 'AI Generate commit message';
 const MAX_DIFF_BYTES = 200 * 1024;
 
 let log: vscode.OutputChannel;
