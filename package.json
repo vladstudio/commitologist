@@ -1,26 +1,77 @@
 {
-  "name": "commitologist-monorepo",
+  "name": "commitologist",
+  "displayName": "Commitologist",
   "description": "Generate commit messages using Tetra",
   "version": "0.2.0",
-  "private": true,
-  "workspaces": [
-    "packages/vscode"
+  "publisher": "vladstudio",
+  "icon": "logo.png",
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "commit",
+    "commit-message",
+    "productivity",
+    "source-control"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vladstudio/commitologist.git"
   },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onCommand:commitologist.generateMessage"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "commitologist.generateMessage",
+        "title": "Commitologist: Generate Commit Message",
+        "icon": {
+          "light": "icon.svg",
+          "dark": "icon-dark.svg"
+        }
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "commitologist.generateMessage",
+          "when": "scmProvider == git",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "commitologist.generateMessage",
+          "when": "scmProvider == git"
+        }
+      ]
+    }
+  },
   "scripts": {
-    "build": "cd packages/vscode && bun run build",
-    "watch": "cd packages/vscode && bun run watch",
-    "clean": "cd packages/vscode && bun run clean",
-    "lint": "biome check packages/vscode/src || true",
-    "lint:fix": "biome check --fix packages/vscode/src || true",
-    "format": "biome format --write packages/vscode/src || true"
+    "build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node16",
+    "watch": "bun run build --watch",
+    "clean": "rm -rf dist",
+    "test": "bun test",
+    "vscode:prepublish": "bun run build",
+    "compile": "tsc -p ./",
+    "lint": "biome check src || true",
+    "lint:fix": "biome check --fix src || true",
+    "format": "biome format --write src || true"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.3",
     "@types/node": "^24.1.0",
+    "@types/vscode": "^1.102.0",
+    "esbuild": "^0.25.8",
     "typescript": "^5.8.3"
-  }
+  },
+  "extensionDependencies": [
+    "vscode.git"
+  ]
 }

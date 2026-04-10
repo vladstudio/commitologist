@@ -2,8 +2,6 @@
 
 Generate commit messages in VSCode using [Tetra](https://apps.vlad.studio/tetra).
 
-## How it works
-
 Click the Commitologist button in the Source Control panel (or Command Palette â†’ "Commitologist: Generate Commit Message"). The extension sends your git diff to Tetra's local HTTP API, which runs the "AI Generate commit message" command and returns the result into the commit input box.
 
 ## Requirements
@@ -13,7 +11,7 @@ Click the Commitologist button in the Source Control panel (or Command Palette â
 
 ## Installation
 
-Search "Commitologist" in the VSCode marketplace or install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=vladstudio.commitologist).
+Search "Commitologist" in the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=vladstudio.commitologist) and click Install.
 
 ## Development
 
@@ -21,10 +19,14 @@ Search "Commitologist" in the VSCode marketplace or install from [Visual Studio 
 git clone https://github.com/vladstudio/commitologist.git
 cd commitologist
 bun install
-bun run build:vscode
+bun run build
 ```
 
 Press F5 in VSCode to launch the Extension Development Host.
+
+## Troubleshooting
+
+Check the Output panel (select "Commitologist" from the dropdown) for error details.
 
 ## License
 

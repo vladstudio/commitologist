@@ -11,10 +11,9 @@ VSCode extension that generates commit messages via Tetra's local HTTP API.
 ## Structure
 
 ```
-packages/vscode/
-  src/extension.ts    # Entire extension (~70 lines)
-  package.json        # Extension manifest
-  dist/extension.js   # Built by esbuild
+src/extension.ts    # Entire extension (~100 lines)
+package.json        # Extension manifest
+dist/extension.js   # Built by esbuild
 ```
 
 ## Development
