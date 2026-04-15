@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 const execAsync = promisify(exec);
 const TETRA_URL = 'http://localhost:24100';
 const COMMAND_NAME = 'AI Generate commit message';
-const MAX_DIFF_BYTES = 200 * 1024;
+const MAX_DIFF_BYTES = 80 * 1024;
 
 let log: vscode.OutputChannel;
 
@@ -78,6 +78,18 @@ async function generateMessage() {
   }
 }
 
+const NOISY = /\.(lock|vsix|min\.(js|css)|map|DS_Store|snap)$|^(package-lock\.json|pnpm-lock\.yaml)$/i;
+
+function parseFiles(diff: string) {
+  return diff.split(/^(?=diff --git )/m).filter(Boolean).map((content) => {
+    const path = content.match(/^diff --git a\/.+ b\/(.+)/)?.[1] ?? '(unknown)';
+    const lines = content.split('\n');
+    const added = lines.filter((l) => l.startsWith('+') && !l.startsWith('+++')).length;
+    const removed = lines.filter((l) => l.startsWith('-') && !l.startsWith('---')).length;
+    return { path, content, added, removed };
+  });
+}
+
 async function getDiff(cwd: string): Promise<string> {
   const execOpts = { cwd, maxBuffer: 10 * 1024 * 1024 };
   const gitDiff = (ctx: number) =>
@@ -86,17 +98,37 @@ async function getDiff(cwd: string): Promise<string> {
       execAsync(`git diff -U${ctx}`, execOpts).then((r) => r.stdout),
     ]).then(([staged, unstaged]) => [staged, unstaged].filter(Boolean).join('\n'));
 
-  for (const ctx of [3, 2, 1]) {
-    const diff = await gitDiff(ctx);
-    if (diff.length <= MAX_DIFF_BYTES) {
-      if (ctx < 3) log.appendLine(`Using -U${ctx} to fit within size budget`);
-      return diff;
-    }
+  let diff = '';
+  for (const ctx of [3, 2, 1, 0]) {
+    diff = await gitDiff(ctx);
+    if (diff.length <= MAX_DIFF_BYTES) return diff;
   }
 
-  const diff = await gitDiff(1);
-  log.appendLine(`Warning: diff (${diff.length} bytes) exceeds ${MAX_DIFF_BYTES} byte budget even with -U1`);
-  return diff;
+  const summary = (f: { path: string; added: number; removed: number }) =>
+    `${f.path}: +${f.added}/-${f.removed} lines\n`;
+
+  const files = parseFiles(diff);
+  const omitted: typeof files = [];
+
+  // drop noisy files first, then largest diffs, until within budget
+  const ranked = [...files].sort((a, b) => {
+    const aN = NOISY.test(a.path) ? 1 : 0, bN = NOISY.test(b.path) ? 1 : 0;
+    return bN - aN || b.content.length - a.content.length;
+  });
+  const kept = new Set(files.map((f) => f.path));
+  let size = files.reduce((s, f) => s + f.content.length, 0);
+  for (const f of ranked) {
+    if (size <= MAX_DIFF_BYTES) break;
+    kept.delete(f.path);
+    omitted.push(f);
+    size += summary(f).length - f.content.length;
+  }
+
+  log.appendLine(`Truncation: ${kept.size} full diffs, ${omitted.length} summarized`);
+  const parts = omitted.map(summary);
+  if (parts.length && kept.size) parts.push('\n');
+  for (const f of files) if (kept.has(f.path)) parts.push(f.content);
+  return parts.join('');
 }
 
 export function deactivate() { }
