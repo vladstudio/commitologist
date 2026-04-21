@@ -6,7 +6,7 @@ Click the Commitologist button in the Source Control panel (or Command Palette â
 
 ## Requirements
 
-- [Tetra](https://apps.vlad.studio/tetra) running on `localhost:12400`
+- [Tetra](https://apps.vlad.studio/tetra) running on `localhost:24100`
 - An `AI Generate commit message.prompt.md` command in `~/.config/tetra/commands/`
 
 ## Installation

@@ -3,7 +3,7 @@ import { promisify } from 'node:util';
 import * as vscode from 'vscode';
 
 const execAsync = promisify(exec);
-const TETRA_URL = 'http://localhost:12400';
+const TETRA_URL = 'http://localhost:24100';
 const COMMAND_NAME = 'AI Generate commit message';
 const MAX_DIFF_BYTES = 80 * 1024;
 
