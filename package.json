@@ -27,6 +27,16 @@
     "onCommand:commitologist.generateMessage"
   ],
   "contributes": {
+    "configuration": {
+      "title": "Commitologist",
+      "properties": {
+        "commitologist.commandName": {
+          "type": "string",
+          "default": "Commit message",
+          "description": "Name of the Tetra transform command to invoke."
+        }
+      }
+    },
     "commands": [
       {
         "command": "commitologist.generateMessage",

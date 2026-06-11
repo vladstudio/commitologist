@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 
 const execAsync = promisify(exec);
 const TETRA_URL = 'http://localhost:24100';
-const COMMAND_NAME = 'Commit message';
 const MAX_DIFF_BYTES = 80 * 1024;
 
 let log: vscode.OutputChannel;
@@ -35,10 +34,15 @@ async function generateMessage() {
         log.appendLine(`Diff: ${diff.length} bytes`);
         if (!diff) throw new Error('No changes found');
 
+        const commandName = vscode.workspace
+          .getConfiguration('commitologist')
+          .get<string>('commandName', 'Commit message');
+        log.appendLine(`Command: ${commandName}`);
+
         const res = await fetch(`${TETRA_URL}/transform`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ command: COMMAND_NAME, text: diff }),
+          body: JSON.stringify({ command: commandName, text: diff }),
         });
 
         if (!res.ok) {
