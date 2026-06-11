@@ -10,6 +10,6 @@ coverage/
 .env.production.local
 **/*.map
 **/*.d.ts
-src/extension/*.vsix
 .vscode
 .forest/local.json
+*.vsix
