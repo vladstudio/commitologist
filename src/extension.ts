@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 
 const execAsync = promisify(exec);
 const TETRA_URL = 'http://localhost:24100';
-const COMMAND_NAME = 'AI Generate commit message';
+const COMMAND_NAME = 'Commit message';
 const MAX_DIFF_BYTES = 80 * 1024;
 
 let log: vscode.OutputChannel;
@@ -44,7 +44,9 @@ async function generateMessage() {
         if (!res.ok) {
           const body = await res.text();
           let error = `Tetra returned ${res.status}`;
-          try { error = JSON.parse(body)?.error ?? error; } catch { }
+          try {
+            error = JSON.parse(body)?.error ?? error;
+          } catch {}
           throw new Error(error);
         }
 
@@ -58,8 +60,8 @@ async function generateMessage() {
     const repos: { rootUri: vscode.Uri; inputBox: { value: string } }[] = git?.repositories ?? [];
     log.appendLine(`Repos: ${repos.map((r) => r.rootUri.fsPath).join(', ') || '(none)'}`);
 
-    const repo = repos.find((r) => r.rootUri.fsPath === cwd)
-      ?? (repos.length === 1 ? repos[0] : undefined);
+    const repo =
+      repos.find((r) => r.rootUri.fsPath === cwd) ?? (repos.length === 1 ? repos[0] : undefined);
     if (!repo?.inputBox) throw new Error('Git source control input not available');
     repo.inputBox.value = message;
     log.appendLine('Done');
@@ -71,23 +73,28 @@ async function generateMessage() {
         'Commitologist: Cannot connect to Tetra. Is it running?',
         'Get Tetra'
       );
-      if (action === 'Get Tetra') vscode.env.openExternal(vscode.Uri.parse('https://apps.vlad.studio/tetra'));
+      if (action === 'Get Tetra')
+        vscode.env.openExternal(vscode.Uri.parse('https://apps.vlad.studio/tetra'));
     } else {
       vscode.window.showErrorMessage(`Commitologist: ${msg}`);
     }
   }
 }
 
-const NOISY = /\.(lock|vsix|min\.(js|css)|map|DS_Store|snap)$|^(package-lock\.json|pnpm-lock\.yaml)$/i;
+const NOISY =
+  /\.(lock|vsix|min\.(js|css)|map|DS_Store|snap)$|^(package-lock\.json|pnpm-lock\.yaml)$/i;
 
 function parseFiles(diff: string) {
-  return diff.split(/^(?=diff --git )/m).filter(Boolean).map((content) => {
-    const path = content.match(/^diff --git a\/.+ b\/(.+)/)?.[1] ?? '(unknown)';
-    const lines = content.split('\n');
-    const added = lines.filter((l) => l.startsWith('+') && !l.startsWith('+++')).length;
-    const removed = lines.filter((l) => l.startsWith('-') && !l.startsWith('---')).length;
-    return { path, content, added, removed };
-  });
+  return diff
+    .split(/^(?=diff --git )/m)
+    .filter(Boolean)
+    .map((content) => {
+      const path = content.match(/^diff --git a\/.+ b\/(.+)/)?.[1] ?? '(unknown)';
+      const lines = content.split('\n');
+      const added = lines.filter((l) => l.startsWith('+') && !l.startsWith('+++')).length;
+      const removed = lines.filter((l) => l.startsWith('-') && !l.startsWith('---')).length;
+      return { path, content, added, removed };
+    });
 }
 
 async function getDiff(cwd: string): Promise<string> {
@@ -112,7 +119,8 @@ async function getDiff(cwd: string): Promise<string> {
 
   // drop noisy files first, then largest diffs, until within budget
   const ranked = [...files].sort((a, b) => {
-    const aN = NOISY.test(a.path) ? 1 : 0, bN = NOISY.test(b.path) ? 1 : 0;
+    const aN = NOISY.test(a.path) ? 1 : 0,
+      bN = NOISY.test(b.path) ? 1 : 0;
     return bN - aN || b.content.length - a.content.length;
   });
   const kept = new Set(files.map((f) => f.path));
@@ -131,4 +139,4 @@ async function getDiff(cwd: string): Promise<string> {
   return parts.join('');
 }
 
-export function deactivate() { }
+export function deactivate() {}
