@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate commit messages using Tetra",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {
