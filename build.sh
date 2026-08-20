@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-codium --uninstall-extension vladstudio.commitologist || true
-rm commitologist-*.vsix
+code --uninstall-extension vladstudio.commitologist || true
+rm -f commitologist-*.vsix
 bun run build
 vsce package
-codium --install-extension commitologist-*.vsix
+code --install-extension commitologist-*.vsix
