@@ -2,7 +2,7 @@
   "name": "commitologist",
   "displayName": "Commitologist",
   "description": "Generate commit messages using Tetra",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "publisher": "vladstudio",
   "icon": "logo.png",
   "engines": {
@@ -65,21 +65,22 @@
   },
   "scripts": {
     "build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node16",
+    "typecheck": "tsc -p ./ --noEmit",
     "watch": "bun run build --watch",
     "clean": "rm -rf dist",
     "test": "bun test",
     "vscode:prepublish": "bun run build",
     "compile": "tsc -p ./",
-    "lint": "biome check src || true",
-    "lint:fix": "biome check --fix src || true",
-    "format": "biome format --write src || true"
+    "lint": "biome check src",
+    "lint:fix": "biome check --fix src",
+    "format": "biome format --write src"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.1.3",
-    "@types/node": "^24.1.0",
-    "@types/vscode": "^1.102.0",
-    "esbuild": "^0.25.8",
-    "typescript": "^5.8.3"
+    "@biomejs/biome": "^2.5.14",
+    "@types/node": "^24.13.6",
+    "@types/vscode": "1.102.0",
+    "esbuild": "^0.25.12",
+    "typescript": "^5.9.3"
   },
   "extensionDependencies": [
     "vscode.git"

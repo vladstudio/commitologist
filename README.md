@@ -2,7 +2,7 @@
 
 Generate commit messages in VSCode using [Tetra](https://apps.vlad.studio/tetra).
 
-Click the Commitologist button in the Source Control panel (or Command Palette → "Commitologist: Generate Commit Message"). The extension sends your git diff to Tetra's local HTTP API, which runs the "Commit message" command and returns the result into the commit input box.
+Click the Commitologist button in the Source Control panel (or Command Palette → "Commitologist: Generate Commit Message"). The extension sends your staged git diff (falling back to unstaged if nothing is staged) to Tetra's local HTTP API, which runs the "Commit message" command and returns the result into the commit input box.
 
 ## Requirements
 
